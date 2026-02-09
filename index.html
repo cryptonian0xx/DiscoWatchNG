@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>DiscoWatchNG</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.0/build/global/luxon.min.js"></script>
+    <!-- Excel export library -->
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <style>
+        /* Base Styles for Mobile First */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #3b82f6;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --card-bg: #ffffff;
+            --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            background-color: #f1f5f9;
+            color: var(--dark);
+            line-height: 1.4;
+            font-size: 14px;
+            -webkit-text-size-adjust: 100%;
+        }
+        
+        .container {
+            width: 100%;
+            margin: 0 auto;
+            padding: 0.5rem;
+        }
+        
+        /* Header Styles - Mobile First */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logo i {
+            font-size: 1.5rem;
+        }
+        
+        .logo h1 {
+            font-size: 1.2rem;
+            line-height: 1.3;
+        }
+        
+        .logo span {
+            font-weight: 300;
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+        
+        .header-info {
+            text-align: center;
+        }
+        
+        .total-display {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+        
+        .last-updated {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+        
+        /* Grid Status - Mobile Grid */
+        .grid-status {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .status-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+        }
+        
+        .status-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .status-header h3 {
+            font-size: 0.9rem;
+            color: var(--primary);
+        }
+        
+        .status-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--secondary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .status-trend {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-trend.down {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .status-trend.up {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+        
+        /* Charts Section - Stack on Mobile */
+        .charts-section {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .chart-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: var(--shadow);
+            height: 280px;
+        }
+        
+        .chart-card h3 {
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.25rem;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.9rem;
+        }
+        
+        .chart-subtitle {
+            font-size: 0.75rem;
+            color: var(--gray);
+            margin-top: -0.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        /* Data Table - Scrollable on Mobile */
+        .data-section {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1rem;
+        }
+        
+        .data-section h3 {
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .table-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 500px;
+            -webkit-overflow-scrolling: touch;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+            min-width: 800px;
+        }
+        
+        th {
+            background-color: #f1f5f9;
+            color: var(--primary);
+            font-weight: 600;
+            text-align: left;
+            padding: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
+            white-space: nowrap;
+            font-size: 0.75rem;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        td {
+            padding: 0.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.75rem;
+            white-space: nowrap;
+        }
+        
+        tr:hover {
+            background-color: #f8fafc;
+        }
+        
+        .low-grid {
+            background-color: #fef2f2;
+        }
+        
+        .peak-grid {
+            background-color: #f0f9ff;
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1rem;
+            color: var(--gray);
+            font-size: 0.75rem;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 1rem;
+            line-height: 1.4;
+        }
+        
+        /* Loader */
+        .loader {
+            display: none;
+            text-align: center;
+            padding: 1.5rem;
+        }
+        
+        .loader.active {
+            display: block;
+        }
+        
+        .spinner {
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 0.75rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Notification Styles */
+        .notification {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            left: 10px;
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+            color: white;
+            font-size: 0.85rem;
+        }
+        
+        .notification.success {
+            background-color: #10b981;
+        }
+        
+        .notification.error {
+            background-color: #ef4444;
+        }
+        
+        .notification.info {
+            background-color: #3b82f6;
+        }
+        
+        .notification-close {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0;
+            margin-left: auto;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes slideOut {
+            from { transform: translateY(0); opacity: 1; }
+            to { transform: translateY(-20px); opacity: 0; }
+        }
+        
+        /* Record count */
+        .record-count {
+            font-size: 0.8rem;
+            color: var(--gray);
+            text-align: center;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: #f8fafc;
+            border-radius: 4px;
+        }
+        
+        /* Public Notice */
+        .public-notice {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #bae6fd;
+            text-align: center;
+        }
+        
+        .public-notice h3 {
+            color: #0369a1;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .public-notice p {
+            color: #0c4a6e;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Contact Section */
+        .contact-section {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .contact-section h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .contact-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #1e40af;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .btn-secondary {
+            background-color: #e2e8f0;
+            color: var(--dark);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #cbd5e1;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        
+        .btn-success {
+            background-color: #10b981;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #0da271;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .btn-warning {
+            background-color: #f59e0b;
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background-color: #d97706;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .btn-excel {
+            background-color: #217346;
+            color: white;
+        }
+        
+        .btn-excel:hover {
+            background-color: #1a5d38;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .contact-info {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--gray);
+            line-height: 1.5;
+        }
+        
+        .contact-info strong {
+            color: var(--primary);
+        }
+        
+        /* Tablet Styles */
+        @media (min-width: 768px) {
+            body {
+                font-size: 15px;
+            }
+            
+            .container {
+                padding: 1rem;
+                max-width: 1200px;
+            }
+            
+            header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                padding: 1.25rem;
+            }
+            
+            .logo h1 {
+                font-size: 1.5rem;
+            }
+            
+            .logo span {
+                font-size: 0.85rem;
+            }
+            
+            .header-info {
+                text-align: right;
+            }
+            
+            .total-display {
+                font-size: 1.6rem;
+            }
+            
+            .last-updated {
+                font-size: 0.8rem;
+            }
+            
+            .grid-status {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1rem;
+            }
+            
+            .status-card {
+                padding: 1.25rem;
+            }
+            
+            .status-header h3 {
+                font-size: 1rem;
+            }
+            
+            .status-value {
+                font-size: 1.8rem;
+            }
+            
+            .status-trend {
+                font-size: 0.8rem;
+            }
+            
+            .charts-section {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            
+            .chart-card {
+                height: 300px;
+                padding: 1.25rem;
+            }
+            
+            .chart-card h3 {
+                font-size: 1rem;
+            }
+            
+            .chart-subtitle {
+                font-size: 0.8rem;
+            }
+            
+            .data-section {
+                padding: 1.25rem;
+            }
+            
+            .data-section h3 {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            .contact-buttons {
+                flex-direction: row;
+                justify-content: center;
+            }
+            
+            button {
+                width: auto;
+                min-width: 220px;
+            }
+            
+            .table-container {
+                max-height: 600px;
+            }
+            
+            table {
+                font-size: 0.85rem;
+                min-width: 1000px;
+            }
+            
+            th, td {
+                padding: 0.6rem;
+                font-size: 0.85rem;
+            }
+            
+            .notification {
+                left: auto;
+                right: 20px;
+                width: auto;
+                max-width: 400px;
+            }
+        }
+        
+        /* Desktop Styles */
+        @media (min-width: 1024px) {
+            .grid-status {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .status-card {
+                padding: 1.5rem;
+            }
+            
+            .status-value {
+                font-size: 2rem;
+            }
+            
+            .charts-section {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+            
+            .chart-card {
+                height: 350px;
+                padding: 1.5rem;
+            }
+            
+            .contact-section {
+                padding: 2rem;
+            }
+            
+            .table-container {
+                max-height: 700px;
+            }
+        }
+        
+        /* Large Desktop */
+        @media (min-width: 1400px) {
+            .container {
+                max-width: 1400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-bolt"></i>
+                <div>
+                    <h1>DiscoWatchNG Dashboard</h1>
+                    <span>Real-time monitoring of Nigeria's electricity distribution using power allocated to DisCos</span>
+                </div>
+            </div>
+            <div class="header-info">
+                <div class="total-display" id="current-total">Loading...</div>
+                <div class="last-updated" id="last-updated">Last updated: Loading...</div>
+            </div>
+        </header>
+        
+        <div class="public-notice">
+            <h3><i class="fas fa-eye"></i> Sweet Dashboard 😊</h3>
+            <p>DiscoWatchNG monitors Nigeria's electricity distribution in real-time by tracking power allocated to each DisCo (Distribution Company).</p>
+            <p>Data is automatically collected and databased from official sources</p>
+        </div>
+        
+        <div class="grid-status">
+            <div class="status-card">
+                <div class="status-header">
+                    <h3>Current DisCo Load</h3>
+                    <div class="status-trend" id="grid-trend">Loading...</div>
+                </div>
+                <div class="status-value" id="grid-status-value">Loading...</div>
+                <p style="font-size: 0.8rem;">Total power allocated to all DisCos as of latest reading</p>
+            </div>
+            
+            <div class="status-card">
+                <div class="status-header">
+                    <h3>Peak Load Today</h3>
+                    <div class="status-trend" id="peak-trend">Today</div>
+                </div>
+                <div class="status-value" id="peak-load">Loading...</div>
+                <p style="font-size: 0.8rem;">Highest recorded load in current period</p>
+            </div>
+            
+            <div class="status-card">
+                <div class="status-header">
+                    <h3>Average per DisCo</h3>
+                    <div class="status-trend" id="average-trend">Latest Reading</div>
+                </div>
+                <div class="status-value" id="average-load">Loading...</div>
+                <p style="font-size: 0.8rem;">Average load per distribution company</p>
+            </div>
+        </div>
+        
+        <div class="charts-section">
+            <div class="chart-card">
+                <h3>DisCo Load Over Time (MW)</h3>
+                <div class="chart-subtitle">Last 15 readings</div>
+                <canvas id="loadChart"></canvas>
+            </div>
+            
+            <div class="chart-card">
+                <h3>Latest DisCo Distribution (MW)</h3>
+                <div class="chart-subtitle">Current power allocation breakdown</div>
+                <canvas id="discoChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="data-section">
+            <h3>
+                <div class="table-header">
+                    <span>All DisCo Allocation Data</span>
+                    <div class="table-actions">
+                        <button class="btn-excel" id="download-excel">
+                            <i class="fas fa-file-excel"></i> Download Excel
+                        </button>
+                        <button class="btn-secondary" id="refresh-data">
+                            <i class="fas fa-sync-alt"></i> Refresh Data
+                        </button>
+                    </div>
+                </div>
+            </h3>
+            <div class="loader" id="table-loader">
+                <div class="spinner"></div>
+                <p>Loading all data from Google Sheets...</p>
+            </div>
+            <div class="table-container" id="table-container">
+                <table id="grid-data-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Abuja</th>
+                            <th>Eko</th>
+                            <th>Ikeja</th>
+                            <th>Ibadan</th>
+                            <th>Benin</th>
+                            <th>Enugu</th>
+                            <th>PHarcourt</th>
+                            <th>Kaduna</th>
+                            <th>Jos</th>
+                            <th>Yola</th>
+                            <th>Kano</th>
+                            <th>Total</th>
+                            <th>Time of Day</th>
+                            <th>Grid Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="grid-data-body">
+                        <!-- Data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="record-count" id="record-count">
+                Loading records...
+            </div>
+        </div>
+        
+        <div class="contact-section">
+            <h3><i class="fas fa-envelope"></i> Contact & Collaboration</h3>
+            <p style="color: var(--gray); margin-bottom: 1.5rem; font-size: 0.9rem;">
+                For inquiries, data verification, or collaboration opportunities
+            </p>
+            
+            <div class="contact-buttons">
+                <button class="btn-success" id="email-button">
+                    <i class="fas fa-envelope"></i> Email for Inquiries
+                </button>
+                <button class="btn-warning" id="admin-request-button">
+                    <i class="fas fa-external-link-alt"></i> Visit GencoWatch
+                </button>
+            </div>
+            
+            <div class="contact-info">
+                <p>While we strive for accuracy, we are not liable for any incorrect data displayed.</p>
+                <p>Please use the buttons above to reach out for queries, data verification, or future collaborations.</p>
+            </div>
+        </div>
+        
+        <footer>
+            
+            <p>Built by <strong>Mundez</strong> for <strong>MDZ Concepts</strong></p>
+            
+            <p>DiscoWatchNG was created to visualize and analyze Nigeria's electricity distribution in real-time by tracking power allocated to each DisCo (Distribution Company).</p>
+            <p>For generation data and power station monitoring, visit GencoWatchNG. Data is automatically updated from official sources twice daily (Morning and Evening)</p>
+        </footer>
+    </div>
+
+    <script>
+        // ============================================
+        // GOOGLE SHEETS CONFIGURATION - UPDATED TO NEW SHEET
+        // ============================================
+        const GOOGLE_SHEET_ID = '1zDXVSrHfXf97nwMkUTWyPQLpaE1HU9n_XQYUFMLDXSk';
+        const SHEET_NAME = 'Sheet1';
+        const OPENSHEET_URL = `https://opensheet.elk.sh/${GOOGLE_SHEET_ID}/${SHEET_NAME}`;
+        const DateTime = luxon.DateTime;
+
+        // ============================================
+        // GOOGLE SHEETS API CLASS (Updated for new sheet)
+        // ============================================
+        class GoogleSheetsAPI {
+            constructor(baseUrl) {
+                this.baseUrl = baseUrl;
+            }
+            
+            async fetchAllData() {
+                console.log('Fetching data from:', this.baseUrl);
+                
+                try {
+                    const response = await fetch(this.baseUrl);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    const data = await response.json();
+                    console.log('Data loaded successfully:', data);
+                    
+                    return {
+                        success: true,
+                        records: data
+                    };
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                    return {
+                        success: false,
+                        message: error.message,
+                        records: []
+                    };
+                }
+            }
+        }
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        const api = new GoogleSheetsAPI(OPENSHEET_URL);
+        let gridData = [];
+        let loadChart = null;
+        let discoChart = null;
+
+        // DOM Elements
+        const gridDataBody = document.getElementById('grid-data-body');
+        const currentTotal = document.getElementById('current-total');
+        const lastUpdated = document.getElementById('last-updated');
+        const gridStatusValue = document.getElementById('grid-status-value');
+        const gridTrend = document.getElementById('grid-trend');
+        const peakLoad = document.getElementById('peak-load');
+        const peakTrend = document.getElementById('peak-trend');
+        const averageLoad = document.getElementById('average-load');
+        const averageTrend = document.getElementById('average-trend');
+        const tableLoader = document.getElementById('table-loader');
+        const refreshButton = document.getElementById('refresh-data');
+        const downloadExcelButton = document.getElementById('download-excel');
+        const recordCount = document.getElementById('record-count');
+        const tableContainer = document.getElementById('table-container');
+        const emailButton = document.getElementById('email-button');
+        const adminRequestButton = document.getElementById('admin-request-button');
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DiscoWatchNG Dashboard initialized');
+            
+            // Set up event listeners
+            refreshButton.addEventListener('click', loadDataFromSheets);
+            downloadExcelButton.addEventListener('click', downloadTableToExcel);
+            
+            // Contact button event listeners
+            emailButton.addEventListener('click', function() {
+                const subject = encodeURIComponent('DiscoWatchNG - Inquiry');
+                const body = encodeURIComponent('Hello,\n\nI would like to inquire about DiscoWatchNG (Nigeria DisCo Monitoring Dashboard).\n\n[Please provide details of your inquiry here]');
+                window.open(`mailto:edmundez@me.com?subject=${subject}&body=${body}`, '_blank');
+                showNotification('Opening email client...', 'info');
+            });
+            
+            adminRequestButton.addEventListener('click', function() {
+                window.open('https://cryptonian0xx.github.io/GencoWatchNG/', '_blank');
+                showNotification('Opening GencoWatch...', 'info');
+            });
+            
+            // Load initial data
+            loadDataFromSheets();
+            
+            // Auto-refresh data every 2 minutes
+            setInterval(() => {
+                loadDataFromSheets();
+                showNotification('Auto-refreshed data', 'info');
+            }, 120000);
+        });
+
+        // ============================================
+        // EXCEL DOWNLOAD FUNCTION
+        // ============================================
+        function downloadTableToExcel() {
+            if (gridData.length === 0) {
+                showNotification('No data available to download', 'error');
+                return;
+            }
+            
+            try {
+                // Create workbook
+                const wb = XLSX.utils.book_new();
+                
+                // Prepare data for export (using the same order as displayed in table)
+                const exportData = gridData.map(record => {
+                    return {
+                        'Date': record.Date || '',
+                        'Time': fixTimeFormat(record.Time || '', record.Timeofday || ''),
+                        'Abuja': formatNumber(record.AbuyaDisCo || record.AbujaDisCo || 0),
+                        'Eko': formatNumber(record.EkoDisCo || 0),
+                        'Ikeja': formatNumber(record.IkejaDisCo || 0),
+                        'Ibadan': formatNumber(record.IbadanDisCo || 0),
+                        'Benin': formatNumber(record.BeninDisCo || 0),
+                        'Enugu': formatNumber(record.EnuguDisCo || 0),
+                        'PHarcourt': formatNumber(record.PHarcourtDisCo || 0),
+                        'Kaduna': formatNumber(record.KadunaDisCo || 0),
+                        'Jos': formatNumber(record.JosDisCo || 0),
+                        'Yola': formatNumber(record.YolaDisCo || 0),
+                        'Kano': formatNumber(record.KanoDisCo || 0),
+                        'Total': formatNumber(record.Total || 0),
+                        'Time of Day': record.Timeofday || '',
+                        'Grid Status': record.Grid_status || ''
+                    };
+                });
+                
+                // Create worksheet
+                const ws = XLSX.utils.json_to_sheet(exportData);
+                
+                // Add title and metadata
+                const title = `Nigeria DisCo Allocation Data - Exported on ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`;
+                XLSX.utils.sheet_add_aoa(ws, [[title]], { origin: -1 });
+                
+                // Add workbook properties
+                wb.Props = {
+                    Title: "Nigeria DisCo Allocation Data",
+                    Subject: "Distribution Company Power Allocation Data",
+                    Author: "DiscoWatchNG Dashboard",
+                    CreatedDate: new Date()
+                };
+                
+                // Add worksheet to workbook
+                XLSX.utils.book_append_sheet(wb, ws, "DisCo Data");
+                
+                // Generate filename
+                const filename = `Nigeria_DisCo_Data_${new Date().toISOString().slice(0,10)}.xlsx`;
+                
+                // Save file
+                XLSX.writeFile(wb, filename);
+                
+                showNotification(`✅ Excel file downloaded: ${filename}`, 'success');
+                
+            } catch (error) {
+                console.error('Error exporting to Excel:', error);
+                showNotification('❌ Error downloading Excel file', 'error');
+            }
+        }
+
+        // ============================================
+        // DATE/TIME FIXING FUNCTIONS
+        // ============================================
+        function fixTimeFormat(timeString, timeOfDay) {
+            if (!timeString) return '';
+            
+            let hours, minutes;
+            
+            // Extract time parts
+            if (/^\d{1,2}:\d{2}:\d{2}$/.test(timeString)) {
+                // Has seconds, remove them
+                const parts = timeString.split(':');
+                hours = parseInt(parts[0]);
+                minutes = parts[1];
+            } else if (/^\d{1,2}:\d{2}$/.test(timeString)) {
+                // Already in HH:MM format
+                const parts = timeString.split(':');
+                hours = parseInt(parts[0]);
+                minutes = parts[1];
+            } else {
+                // Try to extract HH:MM from any string
+                const timeMatch = timeString.match(/(\d{1,2}):(\d{2})/);
+                if (timeMatch) {
+                    hours = parseInt(timeMatch[1]);
+                    minutes = timeMatch[2];
+                } else {
+                    return timeString;
+                }
+            }
+            
+            // Convert to 24-hour format based on Time of Day
+            if (timeOfDay) {
+                const tod = timeOfDay.toLowerCase();
+                
+                // Evening or Night means PM (add 12 to hours 1-11, keep 12 as is)
+                if ((tod === 'evening' || tod === 'night') && hours < 12) {
+                    hours += 12;
+                }
+                // Morning or Afternoon with hour 12 means it should stay as is for noon
+                // or be converted to 00 for midnight
+                else if ((tod === 'morning' || tod === 'afternoon') && hours === 12) {
+                    // 12 AM (midnight) in morning context
+                    if (tod === 'morning') {
+                        hours = 0;
+                    }
+                    // 12 PM (noon) stays as 12 in afternoon
+                }
+            }
+            
+            // Format with leading zeros
+            const hoursStr = String(hours).padStart(2, '0');
+            const minutesStr = String(minutes).padStart(2, '0');
+            
+            return `${hoursStr}:${minutesStr}`;
+        }
+
+        function formatDateForDisplay(dateString) {
+            if (!dateString) return '';
+            
+            // Handle different date formats
+            if (dateString.includes('/')) {
+                // Already in DD/MM/YYYY format
+                return dateString;
+            }
+            
+            let date;
+            if (dateString.includes('T')) {
+                // ISO format like "2025-12-16T23:00:00.000Z"
+                date = new Date(dateString);
+            } else {
+                // Simple format like "2025-12-16"
+                date = new Date(dateString + 'T00:00:00');
+            }
+            
+            // Format as DD/MM/YYYY
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            
+            return `${day}/${month}/${year}`;
+        }
+
+        // ============================================
+        // SORTING FUNCTIONS
+        // ============================================
+        function sortDataNewestFirst(data) {
+            return [...data].sort((a, b) => {
+                // Create Date objects for comparison
+                const dateA = parseDateTime(a);
+                const dateB = parseDateTime(b);
+                return dateB - dateA; // Newest first
+            });
+        }
+
+        function sortDataOldestFirst(data) {
+            return [...data].sort((a, b) => {
+                // Create Date objects for comparison
+                const dateA = parseDateTime(a);
+                const dateB = parseDateTime(b);
+                return dateA - dateB; // Oldest first
+            });
+        }
+
+        function parseDateTime(record) {
+            const dateStr = record.Date || '';
+            const timeStr = record.Time || '00:00';
+            const timeOfDay = record.Timeofday || '';
+            
+            // Handle DD/MM/YYYY format
+            if (dateStr.includes('/')) {
+                const [day, month, year] = dateStr.split('/');
+                const dateFormatted = `${year}-${month}-${day}`;
+                const timeFormatted = fixTimeFormat(timeStr, timeOfDay);
+                return new Date(`${dateFormatted}T${timeFormatted}:00`);
+            }
+            
+            // Handle other formats
+            const timeFormatted = fixTimeFormat(timeStr, timeOfDay);
+            return new Date(`${dateStr}T${timeFormatted}:00`);
+        }
+
+        // ============================================
+        // DATA LOADING FUNCTIONS
+        // ============================================
+        async function loadDataFromSheets() {
+            console.log('Loading data from Google Sheets...');
+            tableLoader.classList.add('active');
+            recordCount.textContent = 'Loading records...';
+            
+            try {
+                const result = await api.fetchAllData();
+                
+                if (result.success) {
+                    gridData = result.records;
+                    console.log(`Loaded ${gridData.length} records from Google Sheets`);
+                    
+                    // Fix time formats in all records
+                    gridData.forEach(record => {
+                        if (record.Time) {
+                            record.Time = fixTimeFormat(record.Time, record.Timeofday);
+                        }
+                    });
+                    
+                    // Update the table with ALL data (OLDEST FIRST)
+                    updateDataTable();
+                    
+                    // Update charts
+                    updateCharts();
+                    
+                    // Update dashboard stats - FIXED CALCULATIONS
+                    updateDashboardStats();
+                    
+                    // Update record count
+                    recordCount.textContent = `Showing ${gridData.length} records from Google Sheets`;
+                    
+                    // Show success message
+                    showNotification(`✅ Loaded ${gridData.length} records from Google Sheets`, 'success');
+                    
+                } else {
+                    throw new Error(result.message || 'Failed to load data from Google Sheets');
+                }
+                
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showNotification(`❌ Error: ${error.message}`, 'error');
+                recordCount.textContent = 'Error loading data. Please try again.';
+                
+                // Show empty state
+                gridDataBody.innerHTML = `
+                    <tr>
+                        <td colspan="16" style="text-align: center; padding: 2rem;">
+                            <p style="color: var(--danger);">Failed to load data from Google Sheets</p>
+                            <p style="color: var(--gray); font-size: 0.8rem;">Check console for details</p>
+                            <button class="btn-primary" onclick="loadDataFromSheets()" style="margin-top: 1rem;">
+                                <i class="fas fa-redo"></i> Retry
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            } finally {
+                tableLoader.classList.remove('active');
+            }
+        }
+
+        // ============================================
+        // FIND LATEST RECORD FUNCTION
+        // ============================================
+        function findLatestRecord() {
+            if (gridData.length === 0) return null;
+            
+            const sortedByDate = sortDataNewestFirst(gridData);
+            return sortedByDate[0];
+        }
+
+        // ============================================
+        // UPDATE FUNCTIONS
+        // ============================================
+        function updateDataTable() {
+            gridDataBody.innerHTML = '';
+            
+            if (gridData.length === 0) {
+                gridDataBody.innerHTML = `
+                    <tr>
+                        <td colspan="16" style="text-align: center; padding: 2rem;">
+                            <p style="color: var(--gray);">No data available in Google Sheets</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            // Sort data by date and time (OLDEST FIRST for table)
+            const sortedDataForTable = sortDataOldestFirst(gridData);
+            
+            // Find peak value for highlighting
+            const peakValue = Math.max(...gridData.map(row => parseInt(row.Total) || 0));
+            
+            // Show ALL data (no limit)
+            sortedDataForTable.forEach(row => {
+                const tr = document.createElement('tr');
+                const total = parseInt(row.Total) || 0;
+                
+                // Highlight rows with very low grid totals
+                if (total < 1000) {
+                    tr.classList.add('low-grid');
+                }
+                
+                // Highlight peak rows
+                if (total === peakValue && peakValue > 0) {
+                    tr.classList.add('peak-grid');
+                }
+                
+                // Format date and time properly
+                const displayDate = formatDateForDisplay(row.Date);
+                const displayTime = fixTimeFormat(row.Time, row.Timeofday);
+                
+                tr.innerHTML = `
+                    <td>${displayDate}</td>
+                    <td>${displayTime}</td>
+                    <td>${formatNumber(row.AbuyaDisCo || row.AbujaDisCo)}</td>
+                    <td>${formatNumber(row.EkoDisCo)}</td>
+                    <td>${formatNumber(row.IkejaDisCo)}</td>
+                    <td>${formatNumber(row.IbadanDisCo)}</td>
+                    <td>${formatNumber(row.BeninDisCo)}</td>
+                    <td>${formatNumber(row.EnuguDisCo)}</td>
+                    <td>${formatNumber(row.PHarcourtDisCo)}</td>
+                    <td>${formatNumber(row.KadunaDisCo)}</td>
+                    <td>${formatNumber(row.JosDisCo)}</td>
+                    <td>${formatNumber(row.YolaDisCo)}</td>
+                    <td>${formatNumber(row.KanoDisCo)}</td>
+                    <td><strong>${formatNumber(total)}</strong></td>
+                    <td>${row.Timeofday || ''}</td>
+                    <td>${row.Grid_status || ''}</td>
+                `;
+                
+                gridDataBody.appendChild(tr);
+            });
+            
+            // Scroll to bottom of table to show newest data
+            setTimeout(() => {
+                tableContainer.scrollTop = tableContainer.scrollHeight;
+            }, 100);
+        }
+
+        function updateCharts() {
+            if (gridData.length === 0) return;
+            
+            // For charts, we want OLDEST FIRST for chronological order
+            const sortedDataForChart = sortDataOldestFirst(gridData);
+            
+            // Show last 15 records for chart readability
+            const chartCount = Math.min(15, sortedDataForChart.length);
+            const chartData = sortedDataForChart.slice(-chartCount);
+            
+            // Format labels properly for chart
+            const labels = chartData.map(row => {
+                const date = formatDateForDisplay(row.Date);
+                const time = fixTimeFormat(row.Time, row.Timeofday);
+                return window.innerWidth < 768 ? `${date}\n${time}` : `${date} ${time}`;
+            });
+            
+            const totals = chartData.map(row => parseInt(row.Total) || 0);
+            
+            // Get LATEST disco distribution
+            const latestData = findLatestRecord();
+            
+            if (!latestData) {
+                console.error('No latest data found for disco chart');
+                return;
+            }
+            
+            console.log('Using latest data for disco chart:', latestData);
+            
+            const discoLabels = ['Abuja', 'Eko', 'Ikeja', 'Ibadan', 'Benin', 'Enugu', 'PH', 'Kaduna', 'Jos', 'Yola', 'Kano'];
+            const discoValues = [
+                parseInt(latestData.AbuyaDisCo || latestData.AbujaDisCo) || 0,
+                parseInt(latestData.EkoDisCo) || 0,
+                parseInt(latestData.IkejaDisCo) || 0,
+                parseInt(latestData.IbadanDisCo) || 0,
+                parseInt(latestData.BeninDisCo) || 0,
+                parseInt(latestData.EnuguDisCo) || 0,
+                parseInt(latestData.PHarcourtDisCo) || 0,
+                parseInt(latestData.KadunaDisCo) || 0,
+                parseInt(latestData.JosDisCo) || 0,
+                parseInt(latestData.YolaDisCo) || 0,
+                parseInt(latestData.KanoDisCo) || 0
+            ];
+            
+            // Grid Load Over Time Chart
+            const loadCtx = document.getElementById('loadChart').getContext('2d');
+            
+            if (loadChart) {
+                loadChart.destroy();
+            }
+            
+            loadChart = new Chart(loadCtx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Total Grid Load (MW)',
+                        data: totals,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                font: {
+                                    size: window.innerWidth < 768 ? 10 : 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Load: ${formatNumber(context.raw)} MW`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                font: {
+                                    size: window.innerWidth < 768 ? 9 : 11
+                                },
+                                callback: function(value) {
+                                    return formatNumber(value);
+                                }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: {
+                                    size: window.innerWidth < 768 ? 8 : 10
+                                },
+                                maxRotation: window.innerWidth < 768 ? 45 : 0
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Latest DisCo Distribution Chart
+            const discoCtx = document.getElementById('discoChart').getContext('2d');
+            
+            if (discoChart) {
+                discoChart.destroy();
+            }
+            
+            discoChart = new Chart(discoCtx, {
+                type: 'bar',
+                data: {
+                    labels: discoLabels,
+                    datasets: [{
+                        label: 'Latest Load (MW)',
+                        data: discoValues,
+                        backgroundColor: [
+                            '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6',
+                            '#ec4899', '#06b6d4', '#84cc16', '#f97316', '#6366f1', '#14b8a6'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const total = discoValues.reduce((a, b) => a + b, 0);
+                                    const percentage = total > 0 ? ((context.raw / total) * 100).toFixed(1) : 0;
+                                    return `${context.label}: ${formatNumber(context.raw)} MW (${percentage}%)`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Megawatts (MW)',
+                                font: {
+                                    size: window.innerWidth < 768 ? 10 : 12
+                                }
+                            },
+                            ticks: {
+                                font: {
+                                    size: window.innerWidth < 768 ? 9 : 11
+                                },
+                                callback: function(value) {
+                                    return formatNumber(value);
+                                }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: {
+                                    size: window.innerWidth < 768 ? 8 : 10
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ============================================
+        // UPDATED DASHBOARD STATS FUNCTION - FIXED
+        // ============================================
+        function updateDashboardStats() {
+            console.log('Updating dashboard stats with gridData:', gridData);
+            
+            if (gridData.length === 0) {
+                currentTotal.textContent = 'No Data';
+                lastUpdated.textContent = 'Last updated: Never';
+                gridStatusValue.textContent = 'No Data';
+                gridTrend.textContent = 'No Data';
+                peakLoad.textContent = 'No Data';
+                averageLoad.textContent = 'No Data';
+                return;
+            }
+            
+            // Find the latest record
+            const latestData = findLatestRecord();
+            
+            if (!latestData) {
+                console.error('No latest data found for dashboard stats');
+                currentTotal.textContent = 'No Data';
+                lastUpdated.textContent = 'Last updated: Never';
+                gridStatusValue.textContent = 'No Data';
+                gridTrend.textContent = 'No Data';
+                peakLoad.textContent = 'No Data';
+                averageLoad.textContent = 'No Data';
+                return;
+            }
+            
+            console.log('Latest data found:', latestData);
+            
+            const latestTotal = parseInt(latestData.Total) || 0;
+            
+            // Format date and time properly for display
+            const displayDate = formatDateForDisplay(latestData.Date);
+            const displayTime = fixTimeFormat(latestData.Time, latestData.Timeofday);
+            const latestDateTimeDisplay = `${displayDate} ${displayTime}`;
+            
+            // Update current total and last updated
+            currentTotal.textContent = `${formatNumber(latestTotal)} MW`;
+            lastUpdated.textContent = `Last updated: ${latestDateTimeDisplay}`;
+            
+            // CURRENT GRID STATUS: Show the latest total
+            gridStatusValue.textContent = `${formatNumber(latestTotal)} MW`;
+            
+            // AVERAGE PER DISCO: SIMPLE CALCULATION - Total ÷ 11 DisCos
+            const averagePerDisCo = Math.round(latestTotal / 11);
+            averageLoad.textContent = `${formatNumber(averagePerDisCo)} MW`;
+            averageTrend.textContent = 'Per DisCo';
+            averageTrend.className = 'status-trend';
+            
+            // PEAK LOAD TODAY: Find highest total for today
+            const today = new Date();
+            const todayString = today.toISOString().split('T')[0];
+            
+            // Convert today's date to DD/MM/YYYY format for comparison
+            const day = String(today.getDate()).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const year = today.getFullYear();
+            const todayFormatted = `${day}/${month}/${year}`;
+            
+            console.log('Looking for data from today:', todayFormatted);
+            
+            const todayData = gridData.filter(row => {
+                const rowDate = formatDateForDisplay(row.Date);
+                console.log('Row date:', rowDate, 'Matches today?', rowDate === todayFormatted);
+                return rowDate === todayFormatted;
+            });
+            
+            console.log('Data from today:', todayData);
+            
+            let todayPeak = 0;
+            
+            if (todayData.length > 0) {
+                // Calculate peak for today (highest total)
+                todayPeak = Math.max(...todayData.map(row => parseInt(row.Total) || 0));
+                console.log('Peak for today:', todayPeak);
+            } else {
+                // If no data for today, use overall peak
+                todayPeak = Math.max(...gridData.map(row => parseInt(row.Total) || 0));
+                console.log('Using overall peak:', todayPeak);
+            }
+            
+            peakLoad.textContent = `${formatNumber(todayPeak)} MW`;
+            
+            // Determine grid trend (compare latest with previous)
+            const allSortedByDate = sortDataNewestFirst(gridData);
+            
+            if (allSortedByDate.length >= 2) {
+                const prevData = allSortedByDate[1];
+                const prevTotal = parseInt(prevData.Total) || 0;
+                
+                if (latestTotal > prevTotal + 100) {
+                    gridTrend.textContent = 'Increasing ↑';
+                    gridTrend.className = 'status-trend up';
+                } else if (latestTotal < prevTotal - 100) {
+                    gridTrend.textContent = 'Decreasing ↓';
+                    gridTrend.className = 'status-trend down';
+                } else {
+                    gridTrend.textContent = 'Stable →';
+                    gridTrend.className = 'status-trend';
+                }
+            } else {
+                gridTrend.textContent = 'Single reading';
+                gridTrend.className = 'status-trend';
+            }
+            
+            console.log('Dashboard stats updated:');
+            console.log('- Current Total:', latestTotal);
+            console.log('- Average per DisCo:', averagePerDisCo);
+            console.log('- Peak Today:', todayPeak);
+        }
+
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
+        function formatNumber(num) {
+            const n = parseInt(num || 0);
+            return n.toLocaleString('en-US');
+        }
+
+        function showNotification(message, type = 'info') {
+            // Remove any existing notification
+            const existingNotification = document.querySelector('.notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+            
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                <span>${message}</span>
+                <button class="notification-close"><i class="fas fa-times"></i></button>
+            `;
+            
+            // Add close button event
+            const closeBtn = notification.querySelector('.notification-close');
+            closeBtn.addEventListener('click', () => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            });
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => notification.remove(), 300);
+                }
+            }, 5000);
+            
+            // Add to page
+            document.body.appendChild(notification);
+        }
+
+        // ============================================
+        // RESPONSIVE CHART UPDATES
+        // ============================================
+        window.addEventListener('resize', function() {
+            if (gridData.length > 0) {
+                updateCharts();
+            }
+        });
+    </script>
+</body>
+</html>
