@@ -3,13 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>DiscoWatchNG</title>
+    
+    <!-- 🔥 SEO OPTIMIZED TITLE & META DESCRIPTION -->
+    <title>Is There Light in Nigeria? | Live National Grid Status – DiscoWatchNG</title>
+    <meta name="description" content="Check Nigeria's national grid status live. See if the grid has collapsed, current power allocation, and real-time DisCo load data. Is there light in your area today?">
+    <meta name="keywords" content="is there light, Nigeria grid collapse, national grid Nigeria, NEPA, power supply today, grid status Nigeria, DisCo allocation, electricity distribution Nigeria">
+    <meta name="author" content="DiscoWatchNG">
+    <meta property="og:title" content="Is There Light in Nigeria? Live Grid Status Checker">
+    <meta property="og:description" content="Real-time Nigeria national grid monitoring. Check if the grid has collapsed and see live power allocation data.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://cryptonian0xx.github.io/DiscoWatchNG/og-image.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Is There Light in Nigeria? Live Grid Status">
+    <meta name="twitter:description" content="Check Nigeria's national grid status in real-time. Grid collapse alerts and DisCo load data.">
+    
+    <link rel="canonical" href="https://cryptonian0xx.github.io/DiscoWatchNG/">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.0/build/global/luxon.min.js"></script>
     <!-- Excel export library -->
     <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    
+    <!-- FAQ Schema Markup for Rich Results -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is there light in Nigeria today?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Check the live grid status at the top of this page. Current total power allocation is displayed in real-time, updated from official NIGRID data twice daily."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Has Nigeria's national grid collapsed?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A grid collapse is only classified when both morning (8-9am) and evening (6-7pm) readings show sustained 0MW allocations. Short zero readings may be load balancing or switching."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why is there no power in my area?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Power outages can be caused by national grid collapses, local distribution issues, load shedding, or maintenance. Check the current grid status above to see if it's a national issue."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does Nigeria's national grid work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nigeria's grid consists of GenCos (power generation), TCN (transmission), and DisCos (distribution). Power flows from generation companies through transmission lines to distribution companies that supply electricity to consumers."
+          }
+        }
+      ]
+    }
+    </script>
+    
     <style>
         /* Base Styles for Mobile First */
         * {
@@ -31,12 +88,15 @@
             --card-bg: #ffffff;
             --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --status-stable: #10b981;
+            --status-weak: #f59e0b;
+            --status-collapse: #ef4444;
         }
         
         body {
             background-color: #f1f5f9;
             color: var(--dark);
-            line-height: 1.4;
+            line-height: 1.6;
             font-size: 14px;
             -webkit-text-size-adjust: 100%;
         }
@@ -96,6 +156,134 @@
             opacity: 0.9;
         }
         
+        /* 🔴🟡🟢 GRID STATUS INDICATOR - NEW */
+        .grid-status-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: white;
+            border-radius: 50px;
+            box-shadow: var(--shadow);
+        }
+        
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .status-badge.stable {
+            background-color: var(--status-stable);
+        }
+        
+        .status-badge.weak {
+            background-color: var(--status-weak);
+        }
+        
+        .status-badge.collapse {
+            background-color: var(--status-collapse);
+        }
+        
+        .status-badge i {
+            font-size: 1rem;
+        }
+        
+        .status-label {
+            font-size: 0.9rem;
+        }
+        
+        /* 🔥 SEO CONTENT SECTION - NEW H1 AND EXPLAINER */
+        .hero-content {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .hero-content h1 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.3;
+        }
+        
+        .hero-content p {
+            color: var(--dark);
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+        
+        .hero-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .hero-stat-item {
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .hero-stat-label {
+            color: var(--gray);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .hero-stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        /* ⚠️ GRID COLLAPSE CLASSIFICATION EXPLAINER - CRITICAL PR */
+        .grid-classification {
+            background: linear-gradient(135deg, #fff3cd, #ffe69b);
+            border-left: 4px solid var(--warning);
+            border-radius: 4px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .grid-classification h4 {
+            color: #856404;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .grid-classification ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .grid-classification li {
+            margin-bottom: 0.25rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        
+        .grid-classification li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #856404;
+        }
+        
         /* Grid Status - Mobile Grid */
         .grid-status {
             display: grid;
@@ -153,6 +341,21 @@
             color: #1e40af;
         }
         
+        /* 📊 CHART EXPLAINERS - NEW FOR SEO */
+        .chart-explainer {
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+            background: #f8fafc;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: var(--gray);
+            border-left: 3px solid var(--secondary);
+        }
+        
+        .chart-explainer strong {
+            color: var(--primary);
+        }
+        
         /* Charts Section - Stack on Mobile */
         .charts-section {
             display: grid;
@@ -166,22 +369,146 @@
             border-radius: 8px;
             padding: 1rem;
             box-shadow: var(--shadow);
-            height: 280px;
+            height: 320px;
+            display: flex;
+            flex-direction: column;
         }
         
         .chart-card h3 {
             color: var(--primary);
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
             padding-bottom: 0.25rem;
             border-bottom: 1px solid #e2e8f0;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
         
         .chart-subtitle {
             font-size: 0.75rem;
             color: var(--gray);
-            margin-top: -0.5rem;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .chart-container {
+            flex: 1;
+            position: relative;
+            min-height: 200px;
+        }
+        
+        /* 📚 FAQ SECTION - SEO POWERHOUSE */
+        .faq-section {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .faq-section h2 {
+            color: var(--primary);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .faq-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.25rem;
+        }
+        
+        .faq-item {
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 1.25rem;
+        }
+        
+        .faq-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        
+        .faq-question {
+            font-weight: bold;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .faq-question i {
+            color: var(--secondary);
+        }
+        
+        .faq-answer {
+            color: var(--gray);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            padding-left: 1.75rem;
+        }
+        
+        .faq-answer strong {
+            color: var(--primary);
+        }
+        
+        /* 🎯 HOW NIGERIA GRID WORKS - EDUCATIONAL CONTENT */
+        .grid-education {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #bae6fd;
+        }
+        
+        .grid-education h3 {
+            color: #0369a1;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .grid-flow {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .grid-flow-item {
+            flex: 1;
+            min-width: 100px;
+            text-align: center;
+            padding: 0.75rem;
+            background: white;
+            border-radius: 6px;
+            box-shadow: var(--shadow);
+        }
+        
+        .grid-flow-item i {
+            font-size: 1.5rem;
+            color: var(--secondary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .grid-flow-item span {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .grid-flow-item small {
+            font-size: 0.7rem;
+            color: var(--gray);
+        }
+        
+        .grid-flow-arrow {
+            color: var(--gray);
+            font-size: 1.2rem;
         }
         
         /* Data Table - Scrollable on Mobile */
@@ -265,12 +592,20 @@
         /* Footer */
         footer {
             text-align: center;
-            padding: 1rem;
+            padding: 1.5rem;
             color: var(--gray);
             font-size: 0.75rem;
             border-top: 1px solid #e2e8f0;
             margin-top: 1rem;
-            line-height: 1.4;
+            line-height: 1.6;
+        }
+        
+        footer p {
+            margin-bottom: 0.5rem;
+        }
+        
+        footer strong {
+            color: var(--primary);
         }
         
         /* Loader */
@@ -359,7 +694,7 @@
             border-radius: 4px;
         }
         
-        /* Public Notice */
+        /* Public Notice - Updated with SEO keywords */
         .public-notice {
             background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
             border-radius: 8px;
@@ -529,6 +864,10 @@
                 font-size: 0.8rem;
             }
             
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+            
             .grid-status {
                 grid-template-columns: repeat(3, 1fr);
                 gap: 1rem;
@@ -556,7 +895,7 @@
             }
             
             .chart-card {
-                height: 300px;
+                height: 350px;
                 padding: 1.25rem;
             }
             
@@ -566,6 +905,15 @@
             
             .chart-subtitle {
                 font-size: 0.8rem;
+            }
+            
+            .faq-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+            
+            .grid-flow {
+                flex-wrap: nowrap;
             }
             
             .data-section {
@@ -630,8 +978,12 @@
             }
             
             .chart-card {
-                height: 350px;
+                height: 380px;
                 padding: 1.5rem;
+            }
+            
+            .faq-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
             
             .contact-section {
@@ -658,7 +1010,7 @@
                 <i class="fas fa-bolt"></i>
                 <div>
                     <h1>DiscoWatchNG Dashboard</h1>
-                    <span>Real-time monitoring of Nigeria's electricity distribution using power allocated to DisCos</span>
+                    <span>Nigeria's Live Grid Status Checker</span>
                 </div>
             </div>
             <div class="header-info">
@@ -667,10 +1019,58 @@
             </div>
         </header>
         
+        <!-- 🔴🟡🟢 DYNAMIC GRID STATUS INDICATOR -->
+        <div class="grid-status-indicator" id="grid-status-indicator">
+            <div class="status-badge stable" id="status-badge-stable">
+                <i class="fas fa-check-circle"></i>
+                <span class="status-label">Grid Stable</span>
+            </div>
+            <div class="status-badge weak" id="status-badge-weak">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span class="status-label">Grid Weak</span>
+            </div>
+            <div class="status-badge collapse" id="status-badge-collapse">
+                <i class="fas fa-times-circle"></i>
+                <span class="status-label">Grid Collapsed</span>
+            </div>
+        </div>
+        
+        <!-- 🔥 SEO OPTIMIZED HERO SECTION -->
+        <div class="hero-content">
+            <h1>Is There Light in Nigeria Right Now?</h1>
+            <p>Check Nigeria's national grid status live. See if the grid has collapsed, current power allocation, and real-time DisCo load data. Updated twice daily from official NIGRID sources.</p>
+            <div class="hero-stats" id="hero-stats">
+                <div class="hero-stat-item">
+                    <div class="hero-stat-label">Current Grid Status</div>
+                    <div class="hero-stat-value" id="hero-grid-status">Loading...</div>
+                </div>
+                <div class="hero-stat-item">
+                    <div class="hero-stat-label">Total Power Allocation</div>
+                    <div class="hero-stat-value" id="hero-total">Loading...</div>
+                </div>
+                <div class="hero-stat-item">
+                    <div class="hero-stat-label">Grid Collapse Today?</div>
+                    <div class="hero-stat-value" id="hero-collapse">Checking...</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ⚠️ GRID COLLAPSE CLASSIFICATION EXPLAINER - CRITICAL PR -->
+        <div class="grid-classification">
+            <h4><i class="fas fa-info-circle"></i> How We Determine Grid Collapse</h4>
+            <p><strong>Important:</strong> 0MW readings may be temporary load balancing or switching. We only classify a collapse when:</p>
+            <ul>
+                <li><strong>Morning (8–9am)</strong> AND</li>
+                <li><strong>Evening (6–7pm)</strong></li>
+            </ul>
+            <p>both show <strong>sustained 0MW allocations</strong>. Short zero readings alone do not indicate a national grid collapse.</p>
+            <p style="margin-top: 0.5rem; font-style: italic;">This transparent methodology ensures accurate reporting and prevents misinformation.</p>
+        </div>
+        
         <div class="public-notice">
-            <h3><i class="fas fa-eye"></i> Sweet Dashboard 😊</h3>
-            <p>DiscoWatchNG monitors Nigeria's electricity distribution in real-time by tracking power allocated to each DisCo (Distribution Company).</p>
-            <p>Data is automatically collected and databased from official sources</p>
+            <h3><i class="fas fa-eye"></i> Nigeria's Live Grid Status Checker</h3>
+            <p>DiscoWatchNG monitors Nigeria's electricity distribution in real-time. Get instant answers to: <strong>"Is there light?"</strong> and <strong>"Has the grid collapsed?"</strong></p>
+            <p>Data is automatically collected and databased from official NIGRID sources twice daily (morning and evening).</p>
         </div>
         
         <div class="grid-status">
@@ -680,7 +1080,7 @@
                     <div class="status-trend" id="grid-trend">Loading...</div>
                 </div>
                 <div class="status-value" id="grid-status-value">Loading...</div>
-                <p style="font-size: 0.8rem;">Total power allocated to all DisCos as of latest reading</p>
+                <p style="font-size: 0.8rem;">Total power allocated to all DisCos. <strong>Is there light today?</strong> Check this number.</p>
             </div>
             
             <div class="status-card">
@@ -689,7 +1089,7 @@
                     <div class="status-trend" id="peak-trend">Today</div>
                 </div>
                 <div class="status-value" id="peak-load">Loading...</div>
-                <p style="font-size: 0.8rem;">Highest recorded load in current period</p>
+                <p style="font-size: 0.8rem;">Highest recorded grid allocation today. Indicates grid strength.</p>
             </div>
             
             <div class="status-card">
@@ -698,28 +1098,140 @@
                     <div class="status-trend" id="average-trend">Latest Reading</div>
                 </div>
                 <div class="status-value" id="average-load">Loading...</div>
-                <p style="font-size: 0.8rem;">Average load per distribution company</p>
+                <p style="font-size: 0.8rem;">Average power per distribution company. Lower numbers = weaker grid.</p>
             </div>
         </div>
         
         <div class="charts-section">
             <div class="chart-card">
-                <h3>DisCo Load Over Time (MW)</h3>
-                <div class="chart-subtitle">Last 15 readings</div>
-                <canvas id="loadChart"></canvas>
+                <h3>Nigeria Grid Load Over Time (MW)</h3>
+                <div class="chart-subtitle">Last 15 readings - Shows grid stability trends</div>
+                <div class="chart-container">
+                    <canvas id="loadChart"></canvas>
+                </div>
+                <div class="chart-explainer">
+                    <strong>📈 What this shows:</strong> Historical grid performance. Sharp drops to 0MW in consecutive readings may indicate a <strong>national grid collapse</strong>.
+                </div>
             </div>
             
             <div class="chart-card">
-                <h3>Latest DisCo Distribution (MW)</h3>
-                <div class="chart-subtitle">Current power allocation breakdown</div>
-                <canvas id="discoChart"></canvas>
+                <h3>DisCo Allocation Breakdown (MW)</h3>
+                <div class="chart-subtitle">Current power distribution by company</div>
+                <div class="chart-container">
+                    <canvas id="discoChart"></canvas>
+                </div>
+                <div class="chart-explainer">
+                    <strong>🏢 What this shows:</strong> How much power each DisCo is receiving. Uneven distribution can explain <strong>why some areas have light while others don't</strong>.
+                </div>
             </div>
+        </div>
+        
+        <!-- 📚 FAQ SECTION - SEO POWERHOUSE -->
+        <div class="faq-section">
+            <h2><i class="fas fa-question-circle"></i> Frequently Asked Questions About Nigeria's Grid</h2>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <i class="fas fa-bolt"></i> Q1: Is There Light in Nigeria Today?
+                    </div>
+                    <div class="faq-answer">
+                        <strong>A:</strong> Check the <strong>grid status indicator</strong> at the top of this page. Current total power allocation is <strong><span id="faq-total">Loading...</span></strong> as of <span id="faq-time">Loading...</span>. If this number is above 0MW, the grid is operational.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <i class="fas fa-exclamation-triangle"></i> Q2: Has Nigeria's National Grid Collapsed?
+                    </div>
+                    <div class="faq-answer">
+                        <strong>A:</strong> Based on our classification methodology, a collapse is only confirmed when <strong>both morning AND evening readings show sustained 0MW allocations</strong>. Current collapse status: <strong><span id="faq-collapse">Checking...</span></strong>.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <i class="fas fa-gas-pump"></i> Q3: Why Do GenCos Report Low Gas and Power Supply?
+                    </div>
+                    <div class="faq-answer">
+                        <strong>A:</strong> Generation companies (GenCos) often face <strong>gas supply shortages, pipeline vandalism, or maintenance issues</strong>. This directly reduces power available to the national grid, affecting DisCo allocations and causing load shedding. Check <a href="https://cryptonian0xx.github.io/GencoWatchNG/" target="_blank" style="color: var(--primary);">GencoWatchNG</a> for generation data.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <i class="fas fa-network-wired"></i> Q4: How Does Nigeria's National Grid Work?
+                    </div>
+                    <div class="faq-answer">
+                        <strong>A:</strong> Nigeria's grid operates on three levels: <strong>GenCos</strong> generate power, <strong>TCN</strong> transmits it through national lines, and <strong>DisCos</strong> distribute to consumers. When any part fails, it affects the entire system. See the visual breakdown below.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <i class="fas fa-chart-line"></i> Q5: What Does "Total MW" Mean on This Dashboard?
+                    </div>
+                    <div class="faq-answer">
+                        <strong>A:</strong> The total MW (megawatts) shown is the <strong>sum of power allocated to all 11 DisCos</strong> at the recorded time. This represents the actual power distributed, not generation capacity. Nigeria's generation capacity is higher, but transmission and distribution limitations reduce this number.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <i class="fas fa-newspaper"></i> Q6: Where Can I Find National Grid News Today?
+                    </div>
+                    <div class="faq-answer">
+                        <strong>A:</strong> This dashboard provides <strong>real-time grid status</strong> based on official NIGRID data. For breaking news, follow TCN official channels. Our data is updated twice daily at 8-9am and 6-7pm.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 🎯 HOW NIGERIA GRID WORKS - EDUCATIONAL CONTENT -->
+        <div class="grid-education">
+            <h3><i class="fas fa-graduation-cap"></i> Understanding Nigeria's National Grid</h3>
+            <p style="margin-bottom: 1rem; color: #0c4a6e;">The national grid is a complex system. Here's how power gets from generation to your home:</p>
+            
+            <div class="grid-flow">
+                <div class="grid-flow-item">
+                    <i class="fas fa-industry"></i>
+                    <span>GenCos</span>
+                    <small>Generate Power</small>
+                </div>
+                <div class="grid-flow-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+                <div class="grid-flow-item">
+                    <i class="fas fa-tower-broadcast"></i>
+                    <span>TCN</span>
+                    <small>Transmission</small>
+                </div>
+                <div class="grid-flow-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+                <div class="grid-flow-item">
+                    <i class="fas fa-building"></i>
+                    <span>DisCos</span>
+                    <small>Distribution</small>
+                </div>
+                <div class="grid-flow-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+                <div class="grid-flow-item">
+                    <i class="fas fa-home"></i>
+                    <span>Consumers</span>
+                    <small>You</small>
+                </div>
+            </div>
+            
+            <p style="margin-top: 1rem; font-size: 0.9rem; background: white; padding: 0.75rem; border-radius: 6px;">
+                <strong>🔍 Why this matters:</strong> When you ask <em>"has the grid collapsed?"</em> or <em>"is there light?"</em>, you're checking the entire chain. A collapse means power stops at the transmission stage. Local outages without grid collapse mean your DisCo isn't receiving or distributing power properly.
+            </p>
         </div>
         
         <div class="data-section">
             <h3>
                 <div class="table-header">
-                    <span>All DisCo Allocation Data</span>
+                    <span>DisCo Allocation History - Official NIGRID Data</span>
                     <div class="table-actions">
                         <button class="btn-excel" id="download-excel">
                             <i class="fas fa-file-excel"></i> Download Excel
@@ -764,41 +1276,43 @@
             <div class="record-count" id="record-count">
                 Loading records...
             </div>
+            <p style="margin-top: 0.75rem; font-size: 0.75rem; color: var(--gray); text-align: center;">
+                <i class="fas fa-database"></i> Data source: NIGRID (Nigeria Grid) - Official DisCo Load Profile. Updated morning (8-9am) and evening (6-7pm).
+            </p>
         </div>
         
         <div class="contact-section">
             <h3><i class="fas fa-envelope"></i> Contact & Collaboration</h3>
             <p style="color: var(--gray); margin-bottom: 1.5rem; font-size: 0.9rem;">
-                For inquiries, data verification, or collaboration opportunities
+                For inquiries, data verification, media questions, or collaboration opportunities
             </p>
             
             <div class="contact-buttons">
                 <button class="btn-success" id="email-button">
-                    <i class="fas fa-envelope"></i> Email for Inquiries
+                    <i class="fas fa-envelope"></i> Media/Data Inquiries
                 </button>
                 <button class="btn-warning" id="admin-request-button">
-                    <i class="fas fa-external-link-alt"></i> Visit GencoWatch
+                    <i class="fas fa-external-link-alt"></i> Visit GencoWatch (Generation Data)
                 </button>
             </div>
             
             <div class="contact-info">
-                <p>While we strive for accuracy, we are not liable for any incorrect data displayed.</p>
-                <p>Please use the buttons above to reach out for queries, data verification, or future collaborations.</p>
+                <p><strong>📊 About this data:</strong> While we strive for accuracy, grid data may have reporting delays. We do not sensationalize - our collapse classification requires <strong>sustained 0MW in both daily readings</strong>. We are not liable for incorrect third-party interpretations of this data.</p>
+                <p style="margin-top: 0.5rem;">Built by <strong>Mundez</strong> for <strong>MDZ Concepts</strong> | © 2024 DiscoWatchNG - Nigeria's Live Grid Status Checker</p>
             </div>
         </div>
         
         <footer>
-            
-            <p>Built by <strong>Mundez</strong> for <strong>MDZ Concepts</strong></p>
-            
-            <p>DiscoWatchNG was created to visualize and analyze Nigeria's electricity distribution in real-time by tracking power allocated to each DisCo (Distribution Company).</p>
-            <p>For generation data and power station monitoring, visit GencoWatchNG. Data is automatically updated from official sources twice daily (Morning and Evening)</p>
+            <p><strong>DiscoWatchNG</strong> - Answering "Is there light in Nigeria?" with real-time grid data.</p>
+            <p>We track DisCo allocations to determine <strong>national grid status, collapses, and power distribution trends</strong>.</p>
+            <p>For generation data, visit <strong>GencoWatchNG</strong>. Data automatically updated twice daily from official NIGRID sources.</p>
+            <p style="margin-top: 0.75rem;">Keywords: Nigeria grid status today, is there light, grid collapse news, NEPA, power supply, DisCo allocation, national grid Nigeria, electricity distribution</p>
         </footer>
     </div>
 
     <script>
         // ============================================
-        // GOOGLE SHEETS CONFIGURATION - UPDATED TO NEW SHEET
+        // GOOGLE SHEETS CONFIGURATION
         // ============================================
         const GOOGLE_SHEET_ID = '1zDXVSrHfXf97nwMkUTWyPQLpaE1HU9n_XQYUFMLDXSk';
         const SHEET_NAME = 'Sheet1';
@@ -806,7 +1320,7 @@
         const DateTime = luxon.DateTime;
 
         // ============================================
-        // GOOGLE SHEETS API CLASS (Updated for new sheet)
+        // GOOGLE SHEETS API CLASS
         // ============================================
         class GoogleSheetsAPI {
             constructor(baseUrl) {
@@ -866,26 +1380,44 @@
         const tableContainer = document.getElementById('table-container');
         const emailButton = document.getElementById('email-button');
         const adminRequestButton = document.getElementById('admin-request-button');
+        
+        // SEO/FAQ Elements
+        const heroGridStatus = document.getElementById('hero-grid-status');
+        const heroTotal = document.getElementById('hero-total');
+        const heroCollapse = document.getElementById('hero-collapse');
+        const faqTotal = document.getElementById('faq-total');
+        const faqTime = document.getElementById('faq-time');
+        const faqCollapse = document.getElementById('faq-collapse');
+        
+        // Status badge elements
+        const statusBadgeStable = document.getElementById('status-badge-stable');
+        const statusBadgeWeak = document.getElementById('status-badge-weak');
+        const statusBadgeCollapse = document.getElementById('status-badge-collapse');
 
         // Initialize dashboard
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('DiscoWatchNG Dashboard initialized');
+            console.log('DiscoWatchNG Dashboard initialized - Nigeria Grid Status Checker');
             
             // Set up event listeners
             refreshButton.addEventListener('click', loadDataFromSheets);
             downloadExcelButton.addEventListener('click', downloadTableToExcel);
             
+            // Hide all status badges initially
+            statusBadgeStable.style.display = 'none';
+            statusBadgeWeak.style.display = 'none';
+            statusBadgeCollapse.style.display = 'none';
+            
             // Contact button event listeners
             emailButton.addEventListener('click', function() {
-                const subject = encodeURIComponent('DiscoWatchNG - Inquiry');
-                const body = encodeURIComponent('Hello,\n\nI would like to inquire about DiscoWatchNG (Nigeria DisCo Monitoring Dashboard).\n\n[Please provide details of your inquiry here]');
-                window.open(`mailto:edmundez@me.com?subject=${subject}&body=${body}`, '_blank');
+                const subject = encodeURIComponent('DiscoWatchNG - Media/Data Inquiry');
+                const body = encodeURIComponent('Hello,\n\nI am reaching out regarding DiscoWatchNG - Nigeria\'s Live Grid Status Checker.\n\n[Please provide details of your inquiry here]');
+                window.open(`mailto:edmundezie@gmail.com?subject=${subject}&body=${body}`, '_blank');
                 showNotification('Opening email client...', 'info');
             });
             
             adminRequestButton.addEventListener('click', function() {
                 window.open('https://cryptonian0xx.github.io/GencoWatchNG/', '_blank');
-                showNotification('Opening GencoWatch...', 'info');
+                showNotification('Opening GencoWatch - Generation Data', 'info');
             });
             
             // Load initial data
@@ -894,9 +1426,84 @@
             // Auto-refresh data every 2 minutes
             setInterval(() => {
                 loadDataFromSheets();
-                showNotification('Auto-refreshed data', 'info');
+                showNotification('Auto-refreshed grid data', 'info');
             }, 120000);
         });
+
+        // ============================================
+        // GRID STATUS DETECTION & CLASSIFICATION
+        // ============================================
+        function classifyGridStatus() {
+            if (gridData.length < 2) return 'unknown';
+            
+            // Sort data newest first
+            const sortedData = sortDataNewestFirst(gridData);
+            
+            // Get morning and evening readings
+            let morningTotal = null;
+            let eveningTotal = null;
+            
+            // Check last two readings for collapse classification
+            for (let i = 0; i < Math.min(10, sortedData.length); i++) {
+                const record = sortedData[i];
+                if (record.Timeofday === 'Morning' && morningTotal === null) {
+                    morningTotal = parseInt(record.Total) || 0;
+                } else if (record.Timeofday === 'Evening' && eveningTotal === null) {
+                    eveningTotal = parseInt(record.Total) || 0;
+                }
+                
+                if (morningTotal !== null && eveningTotal !== null) break;
+            }
+            
+            // Check for collapse: both morning AND evening are 0MW
+            const isCollapse = (morningTotal === 0 && eveningTotal === 0);
+            
+            // Get latest reading
+            const latest = sortedData[0];
+            const latestTotal = parseInt(latest.Total) || 0;
+            
+            // Classify grid status
+            if (isCollapse) {
+                return 'collapse';
+            } else if (latestTotal < 1000) {
+                return 'weak';
+            } else if (latestTotal >= 1000) {
+                return 'stable';
+            }
+            
+            return 'unknown';
+        }
+
+        function updateGridStatusIndicator() {
+            const status = classifyGridStatus();
+            
+            // Hide all badges
+            statusBadgeStable.style.display = 'none';
+            statusBadgeWeak.style.display = 'none';
+            statusBadgeCollapse.style.display = 'none';
+            
+            // Show appropriate badge
+            if (status === 'stable') {
+                statusBadgeStable.style.display = 'flex';
+            } else if (status === 'weak') {
+                statusBadgeWeak.style.display = 'flex';
+            } else if (status === 'collapse') {
+                statusBadgeCollapse.style.display = 'flex';
+            }
+            
+            // Update hero section status
+            if (heroGridStatus) {
+                if (status === 'stable') heroGridStatus.textContent = '🟢 Grid Stable';
+                else if (status === 'weak') heroGridStatus.textContent = '🟡 Grid Weak';
+                else if (status === 'collapse') heroGridStatus.textContent = '🔴 Grid Collapsed';
+                else heroGridStatus.textContent = 'Checking...';
+            }
+            
+            // Update collapse status in hero and FAQ
+            const collapseText = (status === 'collapse') ? 'Yes (sustained 0MW)' : 'No';
+            if (heroCollapse) heroCollapse.textContent = collapseText;
+            if (faqCollapse) faqCollapse.textContent = collapseText;
+        }
 
         // ============================================
         // EXCEL DOWNLOAD FUNCTION
@@ -908,10 +1515,8 @@
             }
             
             try {
-                // Create workbook
                 const wb = XLSX.utils.book_new();
                 
-                // Prepare data for export (using the same order as displayed in table)
                 const exportData = gridData.map(record => {
                     return {
                         'Date': record.Date || '',
@@ -933,31 +1538,21 @@
                     };
                 });
                 
-                // Create worksheet
                 const ws = XLSX.utils.json_to_sheet(exportData);
-                
-                // Add title and metadata
                 const title = `Nigeria DisCo Allocation Data - Exported on ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`;
                 XLSX.utils.sheet_add_aoa(ws, [[title]], { origin: -1 });
                 
-                // Add workbook properties
                 wb.Props = {
                     Title: "Nigeria DisCo Allocation Data",
-                    Subject: "Distribution Company Power Allocation Data",
-                    Author: "DiscoWatchNG Dashboard",
+                    Subject: "National Grid Status - Distribution Company Power Allocation",
+                    Author: "DiscoWatchNG - Nigeria's Live Grid Status Checker",
                     CreatedDate: new Date()
                 };
                 
-                // Add worksheet to workbook
-                XLSX.utils.book_append_sheet(wb, ws, "DisCo Data");
-                
-                // Generate filename
-                const filename = `Nigeria_DisCo_Data_${new Date().toISOString().slice(0,10)}.xlsx`;
-                
-                // Save file
+                XLSX.utils.book_append_sheet(wb, ws, "Nigeria Grid Data");
+                const filename = `Nigeria_Grid_Status_${new Date().toISOString().slice(0,10)}.xlsx`;
                 XLSX.writeFile(wb, filename);
-                
-                showNotification(`✅ Excel file downloaded: ${filename}`, 'success');
+                showNotification(`✅ Grid data exported: ${filename}`, 'success');
                 
             } catch (error) {
                 console.error('Error exporting to Excel:', error);
@@ -973,19 +1568,15 @@
             
             let hours, minutes;
             
-            // Extract time parts
             if (/^\d{1,2}:\d{2}:\d{2}$/.test(timeString)) {
-                // Has seconds, remove them
                 const parts = timeString.split(':');
                 hours = parseInt(parts[0]);
                 minutes = parts[1];
             } else if (/^\d{1,2}:\d{2}$/.test(timeString)) {
-                // Already in HH:MM format
                 const parts = timeString.split(':');
                 hours = parseInt(parts[0]);
                 minutes = parts[1];
             } else {
-                // Try to extract HH:MM from any string
                 const timeMatch = timeString.match(/(\d{1,2}):(\d{2})/);
                 if (timeMatch) {
                     hours = parseInt(timeMatch[1]);
@@ -995,26 +1586,19 @@
                 }
             }
             
-            // Convert to 24-hour format based on Time of Day
             if (timeOfDay) {
                 const tod = timeOfDay.toLowerCase();
                 
-                // Evening or Night means PM (add 12 to hours 1-11, keep 12 as is)
                 if ((tod === 'evening' || tod === 'night') && hours < 12) {
                     hours += 12;
                 }
-                // Morning or Afternoon with hour 12 means it should stay as is for noon
-                // or be converted to 00 for midnight
                 else if ((tod === 'morning' || tod === 'afternoon') && hours === 12) {
-                    // 12 AM (midnight) in morning context
                     if (tod === 'morning') {
                         hours = 0;
                     }
-                    // 12 PM (noon) stays as 12 in afternoon
                 }
             }
             
-            // Format with leading zeros
             const hoursStr = String(hours).padStart(2, '0');
             const minutesStr = String(minutes).padStart(2, '0');
             
@@ -1024,22 +1608,17 @@
         function formatDateForDisplay(dateString) {
             if (!dateString) return '';
             
-            // Handle different date formats
             if (dateString.includes('/')) {
-                // Already in DD/MM/YYYY format
                 return dateString;
             }
             
             let date;
             if (dateString.includes('T')) {
-                // ISO format like "2025-12-16T23:00:00.000Z"
                 date = new Date(dateString);
             } else {
-                // Simple format like "2025-12-16"
                 date = new Date(dateString + 'T00:00:00');
             }
             
-            // Format as DD/MM/YYYY
             const day = String(date.getDate()).padStart(2, '0');
             const month = String(date.getMonth() + 1).padStart(2, '0');
             const year = date.getFullYear();
@@ -1052,19 +1631,17 @@
         // ============================================
         function sortDataNewestFirst(data) {
             return [...data].sort((a, b) => {
-                // Create Date objects for comparison
                 const dateA = parseDateTime(a);
                 const dateB = parseDateTime(b);
-                return dateB - dateA; // Newest first
+                return dateB - dateA;
             });
         }
 
         function sortDataOldestFirst(data) {
             return [...data].sort((a, b) => {
-                // Create Date objects for comparison
                 const dateA = parseDateTime(a);
                 const dateB = parseDateTime(b);
-                return dateA - dateB; // Oldest first
+                return dateA - dateB;
             });
         }
 
@@ -1073,7 +1650,6 @@
             const timeStr = record.Time || '00:00';
             const timeOfDay = record.Timeofday || '';
             
-            // Handle DD/MM/YYYY format
             if (dateStr.includes('/')) {
                 const [day, month, year] = dateStr.split('/');
                 const dateFormatted = `${year}-${month}-${day}`;
@@ -1081,7 +1657,6 @@
                 return new Date(`${dateFormatted}T${timeFormatted}:00`);
             }
             
-            // Handle other formats
             const timeFormatted = fixTimeFormat(timeStr, timeOfDay);
             return new Date(`${dateStr}T${timeFormatted}:00`);
         }
@@ -1090,53 +1665,45 @@
         // DATA LOADING FUNCTIONS
         // ============================================
         async function loadDataFromSheets() {
-            console.log('Loading data from Google Sheets...');
+            console.log('Loading Nigeria grid data from Google Sheets...');
             tableLoader.classList.add('active');
-            recordCount.textContent = 'Loading records...';
+            recordCount.textContent = 'Loading grid status data...';
             
             try {
                 const result = await api.fetchAllData();
                 
                 if (result.success) {
                     gridData = result.records;
-                    console.log(`Loaded ${gridData.length} records from Google Sheets`);
+                    console.log(`Loaded ${gridData.length} grid records from NIGRID`);
                     
-                    // Fix time formats in all records
                     gridData.forEach(record => {
                         if (record.Time) {
                             record.Time = fixTimeFormat(record.Time, record.Timeofday);
                         }
                     });
                     
-                    // Update the table with ALL data (OLDEST FIRST)
                     updateDataTable();
-                    
-                    // Update charts
                     updateCharts();
-                    
-                    // Update dashboard stats - FIXED CALCULATIONS
                     updateDashboardStats();
+                    updateGridStatusIndicator();
+                    updateSEOFaqFields();
                     
-                    // Update record count
-                    recordCount.textContent = `Showing ${gridData.length} records from Google Sheets`;
-                    
-                    // Show success message
-                    showNotification(`✅ Loaded ${gridData.length} records from Google Sheets`, 'success');
+                    recordCount.textContent = `Showing ${gridData.length} grid status records from NIGRID`;
+                    showNotification(`✅ Nigeria grid data loaded - ${gridData.length} records`, 'success');
                     
                 } else {
-                    throw new Error(result.message || 'Failed to load data from Google Sheets');
+                    throw new Error(result.message || 'Failed to load grid data');
                 }
                 
             } catch (error) {
                 console.error('Error loading data:', error);
                 showNotification(`❌ Error: ${error.message}`, 'error');
-                recordCount.textContent = 'Error loading data. Please try again.';
+                recordCount.textContent = 'Error loading grid data. Please try again.';
                 
-                // Show empty state
                 gridDataBody.innerHTML = `
                     <tr>
                         <td colspan="16" style="text-align: center; padding: 2rem;">
-                            <p style="color: var(--danger);">Failed to load data from Google Sheets</p>
+                            <p style="color: var(--danger);">Failed to load Nigeria grid status</p>
                             <p style="color: var(--gray); font-size: 0.8rem;">Check console for details</p>
                             <button class="btn-primary" onclick="loadDataFromSheets()" style="margin-top: 1rem;">
                                 <i class="fas fa-redo"></i> Retry
@@ -1149,14 +1716,26 @@
             }
         }
 
-        // ============================================
-        // FIND LATEST RECORD FUNCTION
-        // ============================================
         function findLatestRecord() {
             if (gridData.length === 0) return null;
-            
             const sortedByDate = sortDataNewestFirst(gridData);
             return sortedByDate[0];
+        }
+
+        // ============================================
+        // UPDATE SEO FAQ FIELDS
+        // ============================================
+        function updateSEOFaqFields() {
+            const latest = findLatestRecord();
+            if (!latest) return;
+            
+            const latestTotal = parseInt(latest.Total) || 0;
+            const displayDate = formatDateForDisplay(latest.Date);
+            const displayTime = fixTimeFormat(latest.Time, latest.Timeofday);
+            
+            if (faqTotal) faqTotal.textContent = `${formatNumber(latestTotal)} MW`;
+            if (faqTime) faqTime.textContent = `${displayDate} ${displayTime}`;
+            if (heroTotal) heroTotal.textContent = `${formatNumber(latestTotal)} MW`;
         }
 
         // ============================================
@@ -1169,35 +1748,28 @@
                 gridDataBody.innerHTML = `
                     <tr>
                         <td colspan="16" style="text-align: center; padding: 2rem;">
-                            <p style="color: var(--gray);">No data available in Google Sheets</p>
+                            <p style="color: var(--gray);">No grid data available</p>
                         </td>
                     </tr>
                 `;
                 return;
             }
             
-            // Sort data by date and time (OLDEST FIRST for table)
             const sortedDataForTable = sortDataOldestFirst(gridData);
-            
-            // Find peak value for highlighting
             const peakValue = Math.max(...gridData.map(row => parseInt(row.Total) || 0));
             
-            // Show ALL data (no limit)
             sortedDataForTable.forEach(row => {
                 const tr = document.createElement('tr');
                 const total = parseInt(row.Total) || 0;
                 
-                // Highlight rows with very low grid totals
                 if (total < 1000) {
                     tr.classList.add('low-grid');
                 }
                 
-                // Highlight peak rows
                 if (total === peakValue && peakValue > 0) {
                     tr.classList.add('peak-grid');
                 }
                 
-                // Format date and time properly
                 const displayDate = formatDateForDisplay(row.Date);
                 const displayTime = fixTimeFormat(row.Time, row.Timeofday);
                 
@@ -1223,7 +1795,6 @@
                 gridDataBody.appendChild(tr);
             });
             
-            // Scroll to bottom of table to show newest data
             setTimeout(() => {
                 tableContainer.scrollTop = tableContainer.scrollHeight;
             }, 100);
@@ -1232,14 +1803,10 @@
         function updateCharts() {
             if (gridData.length === 0) return;
             
-            // For charts, we want OLDEST FIRST for chronological order
             const sortedDataForChart = sortDataOldestFirst(gridData);
-            
-            // Show last 15 records for chart readability
             const chartCount = Math.min(15, sortedDataForChart.length);
             const chartData = sortedDataForChart.slice(-chartCount);
             
-            // Format labels properly for chart
             const labels = chartData.map(row => {
                 const date = formatDateForDisplay(row.Date);
                 const time = fixTimeFormat(row.Time, row.Timeofday);
@@ -1248,15 +1815,12 @@
             
             const totals = chartData.map(row => parseInt(row.Total) || 0);
             
-            // Get LATEST disco distribution
             const latestData = findLatestRecord();
             
             if (!latestData) {
                 console.error('No latest data found for disco chart');
                 return;
             }
-            
-            console.log('Using latest data for disco chart:', latestData);
             
             const discoLabels = ['Abuja', 'Eko', 'Ikeja', 'Ibadan', 'Benin', 'Enugu', 'PH', 'Kaduna', 'Jos', 'Yola', 'Kano'];
             const discoValues = [
@@ -1273,7 +1837,6 @@
                 parseInt(latestData.KanoDisCo) || 0
             ];
             
-            // Grid Load Over Time Chart
             const loadCtx = document.getElementById('loadChart').getContext('2d');
             
             if (loadChart) {
@@ -1285,7 +1848,7 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Total Grid Load (MW)',
+                        label: 'Nigeria Grid Total Load (MW)',
                         data: totals,
                         borderColor: '#3b82f6',
                         backgroundColor: 'rgba(59, 130, 246, 0.1)',
@@ -1296,7 +1859,7 @@
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false,
+                    maintainAspectRatio: true,
                     plugins: {
                         legend: {
                             labels: {
@@ -1308,7 +1871,7 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return `Load: ${formatNumber(context.raw)} MW`;
+                                    return `Grid Load: ${formatNumber(context.raw)} MW`;
                                 }
                             }
                         }
@@ -1316,6 +1879,13 @@
                     scales: {
                         y: {
                             beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Megawatts (MW)',
+                                font: {
+                                    size: window.innerWidth < 768 ? 10 : 12
+                                }
+                            },
                             ticks: {
                                 font: {
                                     size: window.innerWidth < 768 ? 9 : 11
@@ -1337,7 +1907,6 @@
                 }
             });
             
-            // Latest DisCo Distribution Chart
             const discoCtx = document.getElementById('discoChart').getContext('2d');
             
             if (discoChart) {
@@ -1349,7 +1918,7 @@
                 data: {
                     labels: discoLabels,
                     datasets: [{
-                        label: 'Latest Load (MW)',
+                        label: 'Current DisCo Load (MW)',
                         data: discoValues,
                         backgroundColor: [
                             '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6',
@@ -1359,7 +1928,7 @@
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false,
+                    maintainAspectRatio: true,
                     plugins: {
                         legend: {
                             display: false
@@ -1369,7 +1938,7 @@
                                 label: function(context) {
                                     const total = discoValues.reduce((a, b) => a + b, 0);
                                     const percentage = total > 0 ? ((context.raw / total) * 100).toFixed(1) : 0;
-                                    return `${context.label}: ${formatNumber(context.raw)} MW (${percentage}%)`;
+                                    return `${context.label}: ${formatNumber(context.raw)} MW (${percentage}% of total)`;
                                 }
                             }
                         }
@@ -1405,11 +1974,8 @@
             });
         }
 
-        // ============================================
-        // UPDATED DASHBOARD STATS FUNCTION - FIXED
-        // ============================================
         function updateDashboardStats() {
-            console.log('Updating dashboard stats with gridData:', gridData);
+            console.log('Updating Nigeria grid dashboard stats');
             
             if (gridData.length === 0) {
                 currentTotal.textContent = 'No Data';
@@ -1421,77 +1987,50 @@
                 return;
             }
             
-            // Find the latest record
             const latestData = findLatestRecord();
             
             if (!latestData) {
-                console.error('No latest data found for dashboard stats');
-                currentTotal.textContent = 'No Data';
-                lastUpdated.textContent = 'Last updated: Never';
-                gridStatusValue.textContent = 'No Data';
-                gridTrend.textContent = 'No Data';
-                peakLoad.textContent = 'No Data';
-                averageLoad.textContent = 'No Data';
+                console.error('No latest data found');
                 return;
             }
             
-            console.log('Latest data found:', latestData);
-            
             const latestTotal = parseInt(latestData.Total) || 0;
             
-            // Format date and time properly for display
             const displayDate = formatDateForDisplay(latestData.Date);
             const displayTime = fixTimeFormat(latestData.Time, latestData.Timeofday);
             const latestDateTimeDisplay = `${displayDate} ${displayTime}`;
             
-            // Update current total and last updated
             currentTotal.textContent = `${formatNumber(latestTotal)} MW`;
             lastUpdated.textContent = `Last updated: ${latestDateTimeDisplay}`;
             
-            // CURRENT GRID STATUS: Show the latest total
             gridStatusValue.textContent = `${formatNumber(latestTotal)} MW`;
             
-            // AVERAGE PER DISCO: SIMPLE CALCULATION - Total ÷ 11 DisCos
             const averagePerDisCo = Math.round(latestTotal / 11);
             averageLoad.textContent = `${formatNumber(averagePerDisCo)} MW`;
             averageTrend.textContent = 'Per DisCo';
             averageTrend.className = 'status-trend';
             
-            // PEAK LOAD TODAY: Find highest total for today
             const today = new Date();
-            const todayString = today.toISOString().split('T')[0];
-            
-            // Convert today's date to DD/MM/YYYY format for comparison
             const day = String(today.getDate()).padStart(2, '0');
             const month = String(today.getMonth() + 1).padStart(2, '0');
             const year = today.getFullYear();
             const todayFormatted = `${day}/${month}/${year}`;
             
-            console.log('Looking for data from today:', todayFormatted);
-            
             const todayData = gridData.filter(row => {
                 const rowDate = formatDateForDisplay(row.Date);
-                console.log('Row date:', rowDate, 'Matches today?', rowDate === todayFormatted);
                 return rowDate === todayFormatted;
             });
-            
-            console.log('Data from today:', todayData);
             
             let todayPeak = 0;
             
             if (todayData.length > 0) {
-                // Calculate peak for today (highest total)
                 todayPeak = Math.max(...todayData.map(row => parseInt(row.Total) || 0));
-                console.log('Peak for today:', todayPeak);
             } else {
-                // If no data for today, use overall peak
                 todayPeak = Math.max(...gridData.map(row => parseInt(row.Total) || 0));
-                console.log('Using overall peak:', todayPeak);
             }
             
             peakLoad.textContent = `${formatNumber(todayPeak)} MW`;
             
-            // Determine grid trend (compare latest with previous)
             const allSortedByDate = sortDataNewestFirst(gridData);
             
             if (allSortedByDate.length >= 2) {
@@ -1512,11 +2051,6 @@
                 gridTrend.textContent = 'Single reading';
                 gridTrend.className = 'status-trend';
             }
-            
-            console.log('Dashboard stats updated:');
-            console.log('- Current Total:', latestTotal);
-            console.log('- Average per DisCo:', averagePerDisCo);
-            console.log('- Peak Today:', todayPeak);
         }
 
         // ============================================
@@ -1528,13 +2062,11 @@
         }
 
         function showNotification(message, type = 'info') {
-            // Remove any existing notification
             const existingNotification = document.querySelector('.notification');
             if (existingNotification) {
                 existingNotification.remove();
             }
             
-            // Create notification element
             const notification = document.createElement('div');
             notification.className = `notification ${type}`;
             notification.innerHTML = `
@@ -1543,14 +2075,12 @@
                 <button class="notification-close"><i class="fas fa-times"></i></button>
             `;
             
-            // Add close button event
             const closeBtn = notification.querySelector('.notification-close');
             closeBtn.addEventListener('click', () => {
                 notification.style.animation = 'slideOut 0.3s ease';
                 setTimeout(() => notification.remove(), 300);
             });
             
-            // Auto remove after 5 seconds
             setTimeout(() => {
                 if (notification.parentNode) {
                     notification.style.animation = 'slideOut 0.3s ease';
@@ -1558,13 +2088,9 @@
                 }
             }, 5000);
             
-            // Add to page
             document.body.appendChild(notification);
         }
 
-        // ============================================
-        // RESPONSIVE CHART UPDATES
-        // ============================================
         window.addEventListener('resize', function() {
             if (gridData.length > 0) {
                 updateCharts();
