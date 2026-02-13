@@ -897,14 +897,14 @@
             100% { transform: rotate(360deg); }
         }
         
-        /* Notification Styles */
+ /* Notification Styles */
         .notification {
             position: fixed;
             top: 10px;
             right: 10px;
             left: 10px;
             padding: 0.75rem 1rem;
-            border-radius: 8px;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -913,16 +913,6 @@
             animation: slideIn 0.3s ease;
             color: white;
             font-size: 0.85rem;
-            word-break: break-word;
-        }
-        
-        @media (min-width: 640px) {
-            .notification {
-                left: auto;
-                right: 20px;
-                width: auto;
-                max-width: 400px;
-            }
         }
         
         .notification.success {
@@ -937,10 +927,6 @@
             background-color: #3b82f6;
         }
         
-        .notification.warning {
-            background-color: #f59e0b;
-        }
-        
         .notification-close {
             background: none;
             border: none;
@@ -948,18 +934,17 @@
             cursor: pointer;
             padding: 0;
             margin-left: auto;
-            flex-shrink: 0;
         }
-        
-        @keyframes slideIn {
-            from { transform: translateY(-20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        
-        @keyframes slideOut {
-            from { transform: translateY(0); opacity: 1; }
-            to { transform: translateY(-20px); opacity: 0; }
-        }
+
+@keyframes slideIn {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideOut {
+    from { transform: translateY(0); opacity: 1; }
+    to { transform: translateY(-20px); opacity: 0; }
+}
         
         /* Record count */
         .record-count {
@@ -1094,12 +1079,12 @@
             
             <div class="status-card">
                 <div class="status-header">
-                    <h3>Peak Load Today</h3>
-                    <div class="status-trend" id="peak-trend">Today</div>
+                    <h3>Peak Load Recently</h3>
+                    <div class="status-trend" id="peak-trend">Recently</div>
                 </div>
                 <div class="status-value" id="peak-load">Loading...</div>
                 <!-- MODIFIED: More descriptive text -->
-                <p style="font-size: 0.8rem;">Highest recorded grid allocation today. Indicates grid strength.</p>
+                <p style="font-size: 0.8rem;">Highest recorded grid allocation recently. Indicates highest value the grid has been recently.</p>
             </div>
             
             <div class="status-card">
@@ -1109,7 +1094,7 @@
                 </div>
                 <div class="status-value" id="average-load">Loading...</div>
                 <!-- MODIFIED: More descriptive text -->
-                <p style="font-size: 0.8rem;">Average power per distribution company. Lower numbers = weaker grid.</p>
+                <p style="font-size: 0.8rem;">Average power per distribution company. Lower numbers (from 0MW to 270MW) show a weak grid.</p>
             </div>
         </div>
         
