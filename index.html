@@ -1610,6 +1610,10 @@
                     <i class="fas fa-share-alt"></i> Share DiscoWatchNG
                 </h4>
                 <div class="share-buttons">
+                    <!-- Native share button (shows only on supported devices) -->
+                    <button class="share-btn" id="share-native" style="background-color: #6366f1; display: none;">
+                        <i class="fas fa-share-nodes"></i> Share
+                    </button>
                     <button class="share-btn twitter" id="share-twitter">
                         <i class="fab fa-twitter"></i> Twitter
                     </button>
@@ -2852,41 +2856,142 @@
         }
 
         // ============================================
-        // NEW: SHARE BUTTONS SETUP
+        // NEW: SHARE BUTTONS SETUP WITH FALLBACKS
         // ============================================
         function setupShareButtons() {
+            const shareNative = document.getElementById('share-native');
             const shareTwitter = document.getElementById('share-twitter');
             const shareFacebook = document.getElementById('share-facebook');
             const shareWhatsapp = document.getElementById('share-whatsapp');
             const shareLinkedin = document.getElementById('share-linkedin');
             const shareCopy = document.getElementById('share-copy');
             
-            const url = window.location.href;
-            const text = 'Check Nigeria\'s live grid status on DiscoWatchNG - Is there light today?';
+            const pageUrl = 'https://cryptonian0xx.github.io/DiscoWatchNG/';
+            const shareText = 'Check Nigeria\'s live grid status on DiscoWatchNG - Is there light today?';
+            const shareTitle = 'DiscoWatchNG - Nigeria Grid Status';
+            
+            // Check if Web Share API is available (better for mobile)
+            if (navigator.share !== undefined) {
+                // Show native share button on supported devices
+                shareNative.style.display = 'flex';
+                
+                shareNative.addEventListener('click', () => {
+                    navigator.share({
+                        title: shareTitle,
+                        text: shareText,
+                        url: pageUrl
+                    }).then(() => {
+                        showNotification('✅ Shared successfully!', 'success');
+                    }).catch((error) => {
+                        console.log('Native share cancelled or failed:', error);
+                    });
+                });
+            }
             
             shareTwitter.addEventListener('click', () => {
-                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+                // Use twitter.com instead of x.com for better compatibility
+                const twitterText = `${shareText} ${pageUrl}`;
+                const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(twitterText)}`;
+                
+                // Open in new window with fallback
+                safeOpenURL(twitterUrl, 'Twitter');
             });
             
             shareFacebook.addEventListener('click', () => {
-                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+                // Facebook sharer works without app
+                const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}&quote=${encodeURIComponent(shareText)}`;
+                
+                safeOpenURL(facebookUrl, 'Facebook');
             });
             
             shareWhatsapp.addEventListener('click', () => {
-                window.open(`https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`, '_blank');
+                // Use web.whatsapp.com as fallback - works on desktop and mobile browsers
+                const whatsappText = `${shareText} ${pageUrl}`;
+                
+                // Try native app first on mobile, with web fallback
+                if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                    // Mobile - try app with quick fallback to web
+                    const appUrl = `whatsapp://send?text=${encodeURIComponent(whatsappText)}`;
+                    const webUrl = `https://web.whatsapp.com/send?text=${encodeURIComponent(whatsappText)}`;
+                    
+                    // Try app, fallback to web after short delay
+                    const start = Date.now();
+                    window.location.href = appUrl;
+                    
+                    setTimeout(() => {
+                        // If still on page after 1 second, app didn't open
+                        if (Date.now() - start < 1500) {
+                            window.open(webUrl, '_blank');
+                        }
+                    }, 1000);
+                } else {
+                    // Desktop - use web.whatsapp.com directly
+                    const webUrl = `https://web.whatsapp.com/send?text=${encodeURIComponent(whatsappText)}`;
+                    window.open(webUrl, '_blank');
+                }
             });
             
             shareLinkedin.addEventListener('click', () => {
-                window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
+                // LinkedIn share works reliably in browser
+                const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(pageUrl)}`;
+                
+                safeOpenURL(linkedinUrl, 'LinkedIn');
             });
             
             shareCopy.addEventListener('click', () => {
-                navigator.clipboard.writeText(url).then(() => {
-                    showNotification('Link copied to clipboard!', 'success');
-                }).catch(() => {
-                    showNotification('Failed to copy link', 'error');
-                });
+                // Copy to clipboard with visual feedback
+                const textToCopy = `${shareText}\n${pageUrl}`;
+                
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        showNotification('✅ Link copied to clipboard! Share it anywhere.', 'success');
+                    }).catch(() => {
+                        fallbackCopyToClipboard(textToCopy);
+                    });
+                } else {
+                    fallbackCopyToClipboard(textToCopy);
+                }
             });
+            
+            // Helper function to safely open URLs with fallback
+            function safeOpenURL(url, platformName) {
+                try {
+                    const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
+                    
+                    // Check if popup was blocked
+                    if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+                        // Popup blocked - try direct navigation
+                        showNotification(`Opening ${platformName}...`, 'info');
+                        setTimeout(() => {
+                            window.location.href = url;
+                        }, 500);
+                    }
+                } catch (error) {
+                    console.error(`Error opening ${platformName}:`, error);
+                    showNotification(`Could not open ${platformName}. Please try copying the link instead.`, 'error');
+                }
+            }
+            
+            // Fallback copy function for older browsers
+            function fallbackCopyToClipboard(text) {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                textArea.style.top = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                
+                try {
+                    document.execCommand('copy');
+                    showNotification('✅ Link copied to clipboard!', 'success');
+                } catch (err) {
+                    showNotification('❌ Could not copy. Please copy manually: ' + text, 'error');
+                }
+                
+                document.body.removeChild(textArea);
+            }
         }
 
         // ============================================
