@@ -897,54 +897,101 @@
             100% { transform: rotate(360deg); }
         }
         
- /* Notification Styles */
+        /* Notification Styles */
         .notification {
             position: fixed;
-            top: 10px;
-            right: 10px;
-            left: 10px;
-            padding: 0.75rem 1rem;
-            border-radius: 6px;
+            top: 1rem;
+            right: 1rem;
+            background: white;
+            padding: 0.75rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            box-shadow: var(--shadow-lg);
+            gap: 0.75rem;
+            max-width: 40%;
             z-index: 1000;
             animation: slideIn 0.3s ease;
-            color: white;
-            font-size: 0.85rem;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
         }
         
         .notification.success {
-            background-color: #10b981;
+            border-left: 4px solid var(--accent);
         }
         
         .notification.error {
-            background-color: #ef4444;
+            border-left: 4px solid var(--danger);
+        }
+        
+        .notification.warning {
+            border-left: 4px solid var(--warning);
         }
         
         .notification.info {
-            background-color: #3b82f6;
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .notification i {
+            font-size: 1.2rem;
+        }
+        
+        .notification.success i {
+            color: var(--accent);
+        }
+        
+        .notification.error i {
+            color: var(--danger);
+        }
+        
+        .notification.warning i {
+            color: var(--warning);
+        }
+        
+        .notification.info i {
+            color: var(--secondary);
+        }
+        
+        .notification span {
+            flex: 1;
+            font-size: 0.85rem;
+            color: var(--dark);
         }
         
         .notification-close {
             background: none;
             border: none;
-            color: white;
+            color: var(--gray);
             cursor: pointer;
-            padding: 0;
-            margin-left: auto;
+            padding: 0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-
-@keyframes slideIn {
-    from { transform: translateY(-20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-
-@keyframes slideOut {
-    from { transform: translateY(0); opacity: 1; }
-    to { transform: translateY(-20px); opacity: 0; }
-}
+        
+        .notification-close:hover {
+            color: var(--dark);
+        }
         
         /* Record count */
         .record-count {
@@ -1005,6 +1052,217 @@
             .status-value {
                 font-size: 2rem;
             }
+        }
+
+        /* NEW: Analytics Cards Styling */
+        .analytics-section {
+            margin-bottom: 1rem;
+        }
+
+        .analytics-section h3 {
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .analytics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .analytics-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .analytics-card {
+            background: var(--card-bg);
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .analytics-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .analytics-header i {
+            font-size: 1rem;
+        }
+
+        .analytics-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .analytics-subtext {
+            font-size: 0.75rem;
+            color: var(--gray);
+            line-height: 1.4;
+        }
+
+        .comparison-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .comparison-badge.positive {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--accent);
+        }
+
+        .comparison-badge.negative {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .comparison-badge.neutral {
+            background-color: rgba(100, 116, 139, 0.1);
+            color: var(--gray);
+        }
+
+        /* NEW: Chart Container Styling for new charts */
+        .new-chart-container {
+            background: var(--card-bg);
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 1rem;
+        }
+
+        .new-chart-header {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .new-chart-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        .new-chart-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .chart-selector {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        @media (min-width: 640px) {
+            .chart-selector {
+                width: auto;
+                min-width: 200px;
+            }
+        }
+
+        .new-chart-canvas-wrapper {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        @media (min-width: 640px) {
+            .new-chart-canvas-wrapper {
+                height: 350px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .new-chart-canvas-wrapper {
+                height: 400px;
+            }
+        }
+
+        /* NEW: Share Buttons */
+        .share-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .share-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 0.6rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            color: white;
+            transition: all 0.2s;
+        }
+
+        .share-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .share-btn.twitter {
+            background-color: #1DA1F2;
+        }
+
+        .share-btn.facebook {
+            background-color: #1877F2;
+        }
+
+        .share-btn.whatsapp {
+            background-color: #25D366;
+        }
+
+        .share-btn.linkedin {
+            background-color: #0A66C2;
+        }
+
+        .share-btn.copy {
+            background-color: var(--gray);
         }
     </style>
 </head>
@@ -1084,7 +1342,7 @@
                 </div>
                 <div class="status-value" id="peak-load">Loading...</div>
                 <!-- MODIFIED: More descriptive text -->
-                <p style="font-size: 0.8rem;">Shows the highest power allocation today</p>
+                <p style="font-size: 0.8rem;">Highest recorded grid allocation catalogued on our logs today.</p>
             </div>
             
             <div class="status-card">
@@ -1095,6 +1353,40 @@
                 <div class="status-value" id="average-load">Loading...</div>
                 <!-- MODIFIED: More descriptive text -->
                 <p style="font-size: 0.8rem;">Average power per distribution company. Lower numbers (from 0MW to 270MW) show a weak grid.</p>
+            </div>
+        </div>
+        
+        <!-- NEW: Advanced Analytics Section -->
+        <div class="analytics-section">
+            <h3><i class="fas fa-chart-bar"></i> Advanced Analytics</h3>
+            <div class="analytics-grid">
+                <!-- Day-on-Day Comparison -->
+                <div class="analytics-card">
+                    <div class="analytics-header">
+                        <i class="fas fa-calendar-day"></i>
+                        <span>Day-on-Day Change</span>
+                    </div>
+                    <div class="analytics-value" id="dod-change">-</div>
+                    <div class="analytics-subtext" id="dod-subtext">Comparing latest reading with previous day</div>
+                    <div class="comparison-badge" id="dod-badge" style="display: none;">
+                        <i class="fas fa-arrow-up"></i>
+                        <span id="dod-percentage">-</span>
+                    </div>
+                </div>
+
+                <!-- Capacity Utilization -->
+                <div class="analytics-card">
+                    <div class="analytics-header">
+                        <i class="fas fa-battery-three-quarters"></i>
+                        <span>Capacity Utilization</span>
+                    </div>
+                    <div class="analytics-value" id="capacity-ratio">-</div>
+                    <div class="analytics-subtext" id="capacity-subtext">Current generation vs installed capacity</div>
+                    <div class="comparison-badge neutral" id="capacity-badge" style="display: none;">
+                        <i class="fas fa-info-circle"></i>
+                        <span id="capacity-percentage">-</span>
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -1121,6 +1413,44 @@
                 <div class="chart-explainer">
                     <strong>🏢 What this shows:</strong> How much power each DisCo is receiving. Uneven distribution can explain <strong>why some areas have light while others don't</strong>.
                 </div>
+            </div>
+        </div>
+        
+        <!-- NEW: DisCo Trendline Chart -->
+        <div class="new-chart-container">
+            <div class="new-chart-header">
+                <div class="new-chart-title">
+                    <i class="fas fa-chart-line"></i>
+                    <span>DisCo Load Trend (Last 12 Readings)</span>
+                </div>
+                <select class="chart-selector" id="disco-trend-selector">
+                    <option value="">Select a DisCo</option>
+                </select>
+            </div>
+            <div class="new-chart-canvas-wrapper">
+                <canvas id="disco-trend-chart"></canvas>
+            </div>
+            <div class="chart-explainer">
+                <strong>📈 Understanding the Trend:</strong> This chart shows the power allocation history for the selected distribution company over the last 12 recorded readings. Use this to identify patterns, peak allocation times, and overall supply consistency to your DisCo.
+            </div>
+        </div>
+
+        <!-- NEW: DisCo Min/Max Comparison Chart -->
+        <div class="new-chart-container">
+            <div class="new-chart-header">
+                <div class="new-chart-title">
+                    <i class="fas fa-signal"></i>
+                    <span>DisCo Performance Range</span>
+                </div>
+                <select class="chart-selector" id="disco-range-selector">
+                    <option value="">Select a DisCo</option>
+                </select>
+            </div>
+            <div class="new-chart-canvas-wrapper">
+                <canvas id="disco-range-chart"></canvas>
+            </div>
+            <div class="chart-explainer">
+                <strong>📊 What This Shows:</strong> Compare the current allocation with the historical minimum and maximum values (excluding zero readings) for the selected DisCo. This helps you understand if your current power supply is closer to typical highs or lows, and reveals the full operating range of each distribution company.
             </div>
         </div>
         
@@ -1274,6 +1604,30 @@
                 </button>
             </div>
             
+            <!-- NEW: Social Media Share Buttons -->
+            <div class="share-section" style="margin-top: 1.5rem;">
+                <h4 style="font-size: 0.9rem; color: var(--gray); margin-bottom: 0.75rem;">
+                    <i class="fas fa-share-alt"></i> Share DiscoWatchNG
+                </h4>
+                <div class="share-buttons">
+                    <button class="share-btn twitter" id="share-twitter">
+                        <i class="fab fa-twitter"></i> Twitter
+                    </button>
+                    <button class="share-btn facebook" id="share-facebook">
+                        <i class="fab fa-facebook-f"></i> Facebook
+                    </button>
+                    <button class="share-btn whatsapp" id="share-whatsapp">
+                        <i class="fab fa-whatsapp"></i> WhatsApp
+                    </button>
+                    <button class="share-btn linkedin" id="share-linkedin">
+                        <i class="fab fa-linkedin-in"></i> LinkedIn
+                    </button>
+                    <button class="share-btn copy" id="share-copy">
+                        <i class="fas fa-link"></i> Copy Link
+                    </button>
+                </div>
+            </div>
+            
             <div class="contact-info">
                 <!-- MODIFIED: Added PR disclaimer -->
                 <p><strong>📊 About this data:</strong> While we strive for accuracy, grid data may have reporting delays. We do not sensationalize - our collapse classification requires <strong>sustained 0MW in both daily readings</strong>.</p>
@@ -1343,6 +1697,48 @@
         let gridData = [];
         let loadChart = null;
         let discoChart = null;
+        let discoTrendChart = null; // NEW
+        let discoRangeChart = null; // NEW
+        let realtimeTotal = 0; // Real-time total from OpenSheet API
+        
+        // NEW: Constants for analytics
+        const INSTALLED_CAPACITY_MW = 13625; // Based on official NERC data from August 2025
+        const DISCO_NAMES = ['Abuja', 'Eko', 'Ikeja', 'Ibadan', 'Benin', 'Enugu', 'PHarcourt', 'Kaduna', 'Jos', 'Yola', 'Kano'];
+        
+        // Helper function to get Abuja value (handles both field name variations)
+        function getAbujaValue(row) {
+            return parseInt(row.AbuyaDisCo || row.AbujaDisCo || 0);
+        }
+        
+        const DISCO_FIELD_MAP = {
+            'Abuja': 'AbuyaDisCo',  // NOTE: API sometimes uses "Abuya" or "Abuja"
+            'Eko': 'EkoDisCo',
+            'Ikeja': 'IkejaDisCo',
+            'Ibadan': 'IbadanDisCo',
+            'Benin': 'BeninDisCo',
+            'Enugu': 'EnuguDisCo',
+            'PHarcourt': 'PHarcourtDisCo',
+            'Kaduna': 'KadunaDisCo',
+            'Jos': 'JosDisCo',
+            'Yola': 'YolaDisCo',
+            'Kano': 'KanoDisCo'
+        };
+        
+        // Function to fetch real-time total MW from OpenSheet
+        async function fetchRealtimeTotal() {
+            try {
+                const response = await fetch('https://opensheet.elk.sh/1zDXVSrHfXf97nwMkUTWyPQLpaE1HU9n_XQYUFMLDXSk/LiveMW');
+                const data = await response.json();
+                if (data && data.length > 0 && data[0].Total_MW) {
+                    realtimeTotal = parseInt(data[0].Total_MW) || 0;
+                    console.log('Real-time total fetched:', realtimeTotal, 'MW');
+                    return realtimeTotal;
+                }
+            } catch (error) {
+                console.error('Error fetching real-time total:', error);
+            }
+            return realtimeTotal;
+        }
 
         // DOM Elements
         const gridDataBody = document.getElementById('grid-data-body');
@@ -1370,6 +1766,20 @@
         const statusBadgeWeak = document.getElementById('status-badge-weak');
         const statusBadgeCollapse = document.getElementById('status-badge-collapse');
 
+        // NEW: Analytics DOM elements
+        const dodChange = document.getElementById('dod-change');
+        const dodSubtext = document.getElementById('dod-subtext');
+        const dodBadge = document.getElementById('dod-badge');
+        const dodPercentage = document.getElementById('dod-percentage');
+        const capacityRatio = document.getElementById('capacity-ratio');
+        const capacitySubtext = document.getElementById('capacity-subtext');
+        const capacityBadge = document.getElementById('capacity-badge');
+        const capacityPercentage = document.getElementById('capacity-percentage');
+        
+        // NEW: Chart selectors
+        const discoTrendSelector = document.getElementById('disco-trend-selector');
+        const discoRangeSelector = document.getElementById('disco-range-selector');
+
         // Initialize dashboard
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DiscoWatchNG Dashboard initialized');
@@ -1390,6 +1800,16 @@
                 window.open('https://cryptonian0xx.github.io/GencoWatchNG/', '_blank');
                 showNotification('Opening GencoWatch...', 'info');
             });
+            
+            // NEW: Populate disco selectors
+            populateDiscoSelectors();
+            
+            // NEW: Chart selector event listeners
+            discoTrendSelector.addEventListener('change', updateDiscoTrendChart);
+            discoRangeSelector.addEventListener('change', updateDiscoRangeChart);
+            
+            // NEW: Share button event listeners
+            setupShareButtons();
             
             // Load initial data
             loadDataFromSheets();
@@ -1611,6 +2031,9 @@
                         }
                     });
                     
+                    // Fetch real-time total from OpenSheet API
+                    await fetchRealtimeTotal();
+                    
                     // Update the table with ALL data (OLDEST FIRST)
                     updateDataTable();
                     
@@ -1619,6 +2042,9 @@
                     
                     // Update dashboard stats - FIXED CALCULATIONS
                     updateDashboardStats();
+                    
+                    // NEW: Update analytics
+                    updateAnalytics();
                     
                     // Update record count
                     recordCount.textContent = `Showing ${gridData.length} records from Google Sheets`;
@@ -1763,7 +2189,7 @@
             
             const discoLabels = ['Abuja', 'Eko', 'Ikeja', 'Ibadan', 'Benin', 'Enugu', 'PH', 'Kaduna', 'Jos', 'Yola', 'Kano'];
             const discoValues = [
-                parseInt(latestData.AbuyaDisCo || latestData.AbujaDisCo) || 0,
+                getAbujaValue(latestData),
                 parseInt(latestData.EkoDisCo) || 0,
                 parseInt(latestData.IkejaDisCo) || 0,
                 parseInt(latestData.IbadanDisCo) || 0,
@@ -1943,16 +2369,21 @@
             
             console.log('Latest data found:', latestData);
             
-            const latestTotal = parseInt(latestData.Total) || 0;
+            const latestTotal = realtimeTotal; // Use real-time value from OpenSheet API
             
             // Format date and time properly for display
             const displayDate = formatDateForDisplay(latestData.Date);
             const displayTime = fixTimeFormat(latestData.Time, latestData.Timeofday);
             const latestDateTimeDisplay = `${displayDate} ${displayTime}`;
             
+            // Get current system time for last updated
+            const now = new Date();
+            const currentDate = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
+            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            
             // Update current total and last updated
             currentTotal.textContent = `${formatNumber(latestTotal)} MW`;
-            lastUpdated.textContent = `Last updated: ${latestDateTimeDisplay}`;
+            lastUpdated.textContent = `Last updated: ${currentDate} ${currentTime}`;
             
             // CURRENT GRID STATUS: Show the latest total
             gridStatusValue.textContent = `${formatNumber(latestTotal)} MW`;
@@ -2025,7 +2456,7 @@
             console.log('- Peak Today:', todayPeak);
             
             // ADDED: Update FAQ fields and status indicator
-            updateFAQFields(latestData, latestTotal, displayDate, displayTime);
+            updateFAQFields(latestData, latestTotal, currentDate, currentTime);
             updateGridStatusIndicator(latestTotal, allSortedByDate);
         }
 
@@ -2103,6 +2534,362 @@
         }
 
         // ============================================
+        // NEW: POPULATE DISCO SELECTORS
+        // ============================================
+        function populateDiscoSelectors() {
+            DISCO_NAMES.forEach(disco => {
+                const option1 = document.createElement('option');
+                option1.value = disco;
+                option1.textContent = disco === 'PHarcourt' ? 'Port Harcourt DisCo' : disco + ' DisCo';
+                discoTrendSelector.appendChild(option1);
+
+                const option2 = document.createElement('option');
+                option2.value = disco;
+                option2.textContent = disco === 'PHarcourt' ? 'Port Harcourt DisCo' : disco + ' DisCo';
+                discoRangeSelector.appendChild(option2);
+            });
+        }
+
+        // ============================================
+        // NEW: ANALYTICS FUNCTIONS
+        // ============================================
+        function updateAnalytics() {
+            if (gridData.length < 2) return;
+
+            updateDayOnDayComparison();
+            updateCapacityUtilization();
+        }
+
+        function updateDayOnDayComparison() {
+            const sortedData = sortDataNewestFirst(gridData);
+            const latestReading = sortedData[0];
+            const latestTotal = parseInt(latestReading.Total) || 0;
+            const latestDate = parseDateTime(latestReading);
+
+            // Find previous day's reading
+            let previousDayTotal = null;
+            for (let i = 1; i < sortedData.length; i++) {
+                const currentDate = parseDateTime(sortedData[i]);
+                const daysDiff = Math.floor((latestDate - currentDate) / (1000 * 60 * 60 * 24));
+                
+                if (daysDiff >= 1 && daysDiff <= 2) {
+                    previousDayTotal = parseInt(sortedData[i].Total) || 0;
+                    break;
+                }
+            }
+
+            if (previousDayTotal !== null) {
+                const change = latestTotal - previousDayTotal;
+                const percentChange = previousDayTotal > 0 ? ((change / previousDayTotal) * 100).toFixed(1) : 0;
+
+                dodChange.textContent = `${change >= 0 ? '+' : ''}${formatNumber(change)} MW`;
+                dodSubtext.textContent = `Previous day: ${formatNumber(previousDayTotal)} MW | Current: ${formatNumber(latestTotal)} MW`;
+                
+                dodBadge.style.display = 'inline-flex';
+                dodPercentage.textContent = `${change >= 0 ? '+' : ''}${percentChange}%`;
+                
+                if (change > 0) {
+                    dodBadge.className = 'comparison-badge positive';
+                    dodBadge.querySelector('i').className = 'fas fa-arrow-up';
+                } else if (change < 0) {
+                    dodBadge.className = 'comparison-badge negative';
+                    dodBadge.querySelector('i').className = 'fas fa-arrow-down';
+                } else {
+                    dodBadge.className = 'comparison-badge neutral';
+                    dodBadge.querySelector('i').className = 'fas fa-minus';
+                }
+            } else {
+                dodChange.textContent = 'Insufficient data';
+                dodSubtext.textContent = 'Need at least 2 days of readings';
+                dodBadge.style.display = 'none';
+            }
+        }
+
+        function updateCapacityUtilization() {
+            const sortedData = sortDataNewestFirst(gridData);
+            const latestTotal = realtimeTotal > 0 ? realtimeTotal : (parseInt(sortedData[0].Total) || 0);
+            
+            const utilizationPercent = ((latestTotal / INSTALLED_CAPACITY_MW) * 100).toFixed(1);
+            
+            capacityRatio.textContent = `${formatNumber(latestTotal)} / ${formatNumber(INSTALLED_CAPACITY_MW)} MW`;
+            capacitySubtext.textContent = `Installed capacity based on NERC Aug 2025 data`;
+            
+            capacityBadge.style.display = 'inline-flex';
+            capacityPercentage.textContent = `${utilizationPercent}% of capacity`;
+            
+            if (utilizationPercent >= 50) {
+                capacityBadge.className = 'comparison-badge positive';
+                capacityBadge.querySelector('i').className = 'fas fa-check-circle';
+            } else if (utilizationPercent >= 30) {
+                capacityBadge.className = 'comparison-badge neutral';
+                capacityBadge.querySelector('i').className = 'fas fa-exclamation-circle';
+            } else {
+                capacityBadge.className = 'comparison-badge negative';
+                capacityBadge.querySelector('i').className = 'fas fa-times-circle';
+            }
+        }
+
+        // ============================================
+        // NEW: DISCO TRENDLINE CHART
+        // ============================================
+        function updateDiscoTrendChart() {
+            const selectedDisco = discoTrendSelector.value;
+            
+            if (!selectedDisco) {
+                if (discoTrendChart) {
+                    discoTrendChart.destroy();
+                    discoTrendChart = null;
+                }
+                return;
+            }
+
+            const sortedData = sortDataNewestFirst(gridData);
+            const last12 = sortedData.slice(0, 12).reverse();
+            
+            const labels = last12.map(row => {
+                const date = formatDateForDisplay(row.Date);
+                const time = fixTimeFormat(row.Time, row.Timeofday);
+                return `${date} ${time}`;
+            });
+            
+            // Special handling for Abuja (field name varies)
+            let values;
+            if (selectedDisco === 'Abuja') {
+                values = last12.map(row => getAbujaValue(row));
+                console.log(`Abuja values:`, values);
+            } else {
+                const fieldName = DISCO_FIELD_MAP[selectedDisco];
+                values = last12.map(row => {
+                    const val = parseInt(row[fieldName]) || 0;
+                    return val;
+                });
+                console.log(`${selectedDisco} values:`, values);
+            }
+            
+            const ctx = document.getElementById('disco-trend-chart').getContext('2d');
+            
+            if (discoTrendChart) {
+                discoTrendChart.destroy();
+            }
+            
+            discoTrendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `${selectedDisco === 'PHarcourt' ? 'Port Harcourt' : selectedDisco} DisCo (MW)`,
+                        data: values,
+                        borderColor: 'rgb(16, 185, 129)',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: 'rgb(16, 185, 129)',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: window.innerWidth < 768 ? 10 : 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return selectedDisco + ': ' + formatNumber(context.parsed.y) + ' MW';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                font: {
+                                    size: window.innerWidth < 768 ? 8 : 10
+                                },
+                                callback: function(value) {
+                                    return formatNumber(value) + ' MW';
+                                }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45,
+                                font: {
+                                    size: window.innerWidth < 768 ? 7 : 9
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ============================================
+        // NEW: DISCO MIN/MAX RANGE CHART
+        // ============================================
+        function updateDiscoRangeChart() {
+            const selectedDisco = discoRangeSelector.value;
+            
+            if (!selectedDisco) {
+                if (discoRangeChart) {
+                    discoRangeChart.destroy();
+                    discoRangeChart = null;
+                }
+                return;
+            }
+
+            // Special handling for Abuja (field name varies)
+            let allValues;
+            if (selectedDisco === 'Abuja') {
+                allValues = gridData
+                    .map(row => getAbujaValue(row))
+                    .filter(val => val > 0);
+                console.log(`Abuja non-zero values count: ${allValues.length}`);
+            } else {
+                const fieldName = DISCO_FIELD_MAP[selectedDisco];
+                allValues = gridData
+                    .map(row => parseInt(row[fieldName]) || 0)
+                    .filter(val => val > 0);
+                console.log(`${selectedDisco} non-zero values count: ${allValues.length}`);
+            }
+            
+            if (allValues.length === 0) {
+                console.log(`No data found for ${selectedDisco}`);
+                if (discoRangeChart) {
+                    discoRangeChart.destroy();
+                    discoRangeChart = null;
+                }
+                return;
+            }
+
+            const minValue = Math.min(...allValues);
+            const maxValue = Math.max(...allValues);
+            
+            // Get current value
+            const latestRecord = sortDataNewestFirst(gridData)[0];
+            const currentValue = selectedDisco === 'Abuja' ? getAbujaValue(latestRecord) : (parseInt(latestRecord[DISCO_FIELD_MAP[selectedDisco]]) || 0);
+            
+            console.log(`Range for ${selectedDisco}: Min=${minValue}, Current=${currentValue}, Max=${maxValue}`);
+            
+            const ctx = document.getElementById('disco-range-chart').getContext('2d');
+            
+            if (discoRangeChart) {
+                discoRangeChart.destroy();
+            }
+            
+            discoRangeChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Minimum', 'Current', 'Maximum'],
+                    datasets: [{
+                        label: `${selectedDisco === 'PHarcourt' ? 'Port Harcourt' : selectedDisco} DisCo (MW)`,
+                        data: [minValue, currentValue, maxValue],
+                        backgroundColor: [
+                            'rgba(239, 68, 68, 0.8)',   // Red for minimum
+                            'rgba(59, 130, 246, 0.8)',  // Blue for current
+                            'rgba(16, 185, 129, 0.8)'   // Green for maximum
+                        ],
+                        borderColor: [
+                            'rgb(239, 68, 68)',
+                            'rgb(59, 130, 246)',
+                            'rgb(16, 185, 129)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + formatNumber(context.parsed.x) + ' MW';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                font: {
+                                    size: window.innerWidth < 768 ? 8 : 10
+                                },
+                                callback: function(value) {
+                                    return formatNumber(value) + ' MW';
+                                }
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                font: {
+                                    size: window.innerWidth < 768 ? 9 : 11
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ============================================
+        // NEW: SHARE BUTTONS SETUP
+        // ============================================
+        function setupShareButtons() {
+            const shareTwitter = document.getElementById('share-twitter');
+            const shareFacebook = document.getElementById('share-facebook');
+            const shareWhatsapp = document.getElementById('share-whatsapp');
+            const shareLinkedin = document.getElementById('share-linkedin');
+            const shareCopy = document.getElementById('share-copy');
+            
+            const url = window.location.href;
+            const text = 'Check Nigeria\'s live grid status on DiscoWatchNG - Is there light today?';
+            
+            shareTwitter.addEventListener('click', () => {
+                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+            });
+            
+            shareFacebook.addEventListener('click', () => {
+                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+            });
+            
+            shareWhatsapp.addEventListener('click', () => {
+                window.open(`https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`, '_blank');
+            });
+            
+            shareLinkedin.addEventListener('click', () => {
+                window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
+            });
+            
+            shareCopy.addEventListener('click', () => {
+                navigator.clipboard.writeText(url).then(() => {
+                    showNotification('Link copied to clipboard!', 'success');
+                }).catch(() => {
+                    showNotification('Failed to copy link', 'error');
+                });
+            });
+        }
+
+        // ============================================
         // UTILITY FUNCTIONS
         // ============================================
         function formatNumber(num) {
@@ -2151,6 +2938,8 @@
         window.addEventListener('resize', function() {
             if (gridData.length > 0) {
                 updateCharts();
+                if (discoTrendSelector.value) updateDiscoTrendChart();
+                if (discoRangeSelector.value) updateDiscoRangeChart();
             }
         });
     </script>
