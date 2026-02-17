@@ -1337,12 +1337,12 @@
             
             <div class="status-card">
                 <div class="status-header">
-                    <h3>Peak Load Today</h3>
-                    <div class="status-trend" id="peak-trend">Today</div>
+                    <h3>Peak on Record</h3>
+                    <div class="status-trend" id="peak-trend">All Time</div>
                 </div>
                 <div class="status-value" id="peak-load">Loading...</div>
                 <!-- MODIFIED: More descriptive text -->
-                <p style="font-size: 0.8rem;">Highest recorded grid allocation catalogued on our logs today.</p>
+                <p style="font-size: 0.8rem;">Highest total DisCo allocation ever recorded across all our logs.</p>
             </div>
             
             <div class="status-card">
@@ -1811,6 +1811,10 @@
             // NEW: Chart selector event listeners
             discoTrendSelector.addEventListener('change', updateDiscoTrendChart);
             discoRangeSelector.addEventListener('change', updateDiscoRangeChart);
+            
+            // Show placeholder text on both charts until a DisCo is selected
+            updateDiscoTrendChart();
+            updateDiscoRangeChart();
             
             // NEW: Share button event listeners
             setupShareButtons();
@@ -2398,39 +2402,13 @@
             averageTrend.textContent = 'Per DisCo';
             averageTrend.className = 'status-trend';
             
-            // PEAK LOAD TODAY: Find highest total for today
-            const today = new Date();
-            const todayString = today.toISOString().split('T')[0];
-            
-            // Convert today's date to DD/MM/YYYY format for comparison
-            const day = String(today.getDate()).padStart(2, '0');
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const year = today.getFullYear();
-            const todayFormatted = `${day}/${month}/${year}`;
-            
-            console.log('Looking for data from today:', todayFormatted);
-            
-            const todayData = gridData.filter(row => {
-                const rowDate = formatDateForDisplay(row.Date);
-                console.log('Row date:', rowDate, 'Matches today?', rowDate === todayFormatted);
-                return rowDate === todayFormatted;
-            });
-            
-            console.log('Data from today:', todayData);
-            
-            let todayPeak = 0;
-            
-            if (todayData.length > 0) {
-                // Calculate peak for today (highest total)
-                todayPeak = Math.max(...todayData.map(row => parseInt(row.Total) || 0));
-                console.log('Peak for today:', todayPeak);
-            } else {
-                // If no data for today, use overall peak
-                todayPeak = Math.max(...gridData.map(row => parseInt(row.Total) || 0));
-                console.log('Using overall peak:', todayPeak);
-            }
-            
-            peakLoad.textContent = `${formatNumber(todayPeak)} MW`;
+            // PEAK ON RECORD: Highest Total MW ever recorded across all data
+            const allTimePeak = Math.max(...gridData.map(row => parseInt(row.Total) || 0));
+            const peakRow = gridData.find(row => parseInt(row.Total) === allTimePeak);
+            const peakDate = peakRow ? formatDateForDisplay(peakRow.Date) : '';
+            peakLoad.textContent = `${formatNumber(allTimePeak)} MW`;
+            peakTrend.textContent = peakDate ? peakDate : 'All Time';
+            peakTrend.className = 'status-trend';
             
             // Determine grid trend (compare latest with previous)
             const allSortedByDate = sortDataNewestFirst(gridData);
@@ -2457,7 +2435,7 @@
             console.log('Dashboard stats updated:');
             console.log('- Current Total:', latestTotal);
             console.log('- Average per DisCo:', averagePerDisCo);
-            console.log('- Peak Today:', todayPeak);
+            console.log('- Peak on Record:', allTimePeak);
             
             // ADDED: Update FAQ fields and status indicator
             updateFAQFields(latestData, latestTotal, currentDate, currentTime);
@@ -2636,14 +2614,50 @@
         // ============================================
         // NEW: DISCO TRENDLINE CHART
         // ============================================
+        function drawChartPlaceholder(canvasId, existingChart, message) {
+            if (existingChart) {
+                existingChart.destroy();
+            }
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            return new Chart(ctx, {
+                type: 'bar',
+                data: { labels: [], datasets: [] },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false },
+                        // Inline plugin to draw centred text on the canvas
+                        datalabels: { display: false }
+                    },
+                    scales: { x: { display: false }, y: { display: false } }
+                },
+                plugins: [{
+                    id: 'placeholderText',
+                    beforeDraw(chart) {
+                        const { ctx: c, chartArea } = chart;
+                        if (!chartArea) return;
+                        const cx = chartArea.left + (chartArea.right - chartArea.left) / 2;
+                        const cy = chartArea.top + (chartArea.bottom - chartArea.top) / 2;
+                        c.save();
+                        c.fillStyle = '#94a3b8';
+                        c.font = `${window.innerWidth < 480 ? 13 : 15}px 'Segoe UI', sans-serif`;
+                        c.textAlign = 'center';
+                        c.textBaseline = 'middle';
+                        // Icon-like dot row
+                        c.fillText('📊  ' + message, cx, cy);
+                        c.restore();
+                    }
+                }]
+            });
+        }
+
         function updateDiscoTrendChart() {
             const selectedDisco = discoTrendSelector.value;
             
             if (!selectedDisco) {
-                if (discoTrendChart) {
-                    discoTrendChart.destroy();
-                    discoTrendChart = null;
-                }
+                discoTrendChart = drawChartPlaceholder('disco-trend-chart', discoTrendChart, 'Select a DisCo to display chart');
                 return;
             }
 
@@ -2749,10 +2763,7 @@
             const selectedDisco = discoRangeSelector.value;
             
             if (!selectedDisco) {
-                if (discoRangeChart) {
-                    discoRangeChart.destroy();
-                    discoRangeChart = null;
-                }
+                discoRangeChart = drawChartPlaceholder('disco-range-chart', discoRangeChart, 'Select a DisCo to display chart');
                 return;
             }
 
@@ -2867,7 +2878,7 @@
             const shareCopy = document.getElementById('share-copy');
             
             const pageUrl = 'https://cryptonian0xx.github.io/DiscoWatchNG/';
-            const shareText = 'Check Nigeria\'s live grid status on DiscoWatchNG - Is there light today?';
+            const shareText = 'Check out Nigeria\'s live grid status on DiscoWatchNG - Is there light today?';
             const shareTitle = 'DiscoWatchNG - Nigeria Grid Status';
             
             // Check if Web Share API is available (better for mobile)
