@@ -1731,15 +1731,47 @@
         // Function to fetch real-time total MW from OpenSheet
         async function fetchRealtimeTotal() {
             try {
-                const response = await fetch('https://opensheet.elk.sh/1zDXVSrHfXf97nwMkUTWyPQLpaE1HU9n_XQYUFMLDXSk/LiveMW');
+                console.log('Fetching real-time total from LiveMW API...');
+                const apiUrl = 'https://opensheet.elk.sh/1zDXVSrHfXf97nwMkUTWyPQLpaE1HU9n_XQYUFMLDXSk/LiveMW';
+                console.log('LiveMW API URL:', apiUrl);
+                
+                const response = await fetch(apiUrl);
+                
+                if (!response.ok) {
+                    console.error(`LiveMW API HTTP error! status: ${response.status}`);
+                    console.error('This might mean the LiveMW sheet/tab does not exist in your Google Sheet');
+                    console.error('Please verify that your Google Sheet has a tab named "LiveMW" with a column "Total_MW"');
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
                 const data = await response.json();
+                console.log('LiveMW API response:', JSON.stringify(data, null, 2));
+                
                 if (data && data.length > 0 && data[0].Total_MW) {
                     realtimeTotal = parseInt(data[0].Total_MW) || 0;
-                    console.log('Real-time total fetched:', realtimeTotal, 'MW');
+                    console.log('✅ Real-time total fetched successfully:', realtimeTotal, 'MW');
                     return realtimeTotal;
+                } else {
+                    console.warn('⚠️ LiveMW API returned unexpected data structure. Expected: [{"Total_MW": "xxxx"}]');
+                    console.warn('Actual response:', data);
+                    // Fallback: use the latest historical data if API fails
+                    if (gridData.length > 0) {
+                        const sorted = sortDataNewestFirst(gridData);
+                        realtimeTotal = parseInt(sorted[0].Total) || 0;
+                        console.log('📊 Falling back to latest historical data:', realtimeTotal, 'MW from', sorted[0].Date);
+                    }
                 }
             } catch (error) {
-                console.error('Error fetching real-time total:', error);
+                console.error('❌ Error fetching real-time total:', error.message);
+                console.error('Full error:', error);
+                // Fallback: use the latest historical data if API fails
+                if (gridData.length > 0) {
+                    const sorted = sortDataNewestFirst(gridData);
+                    realtimeTotal = parseInt(sorted[0].Total) || 0;
+                    console.log('📊 API failed, using latest historical data:', realtimeTotal, 'MW from', sorted[0].Date);
+                } else {
+                    console.error('⚠️ No historical data available for fallback');
+                }
             }
             return realtimeTotal;
         }
@@ -1827,6 +1859,16 @@
                 loadDataFromSheets();
                 showNotification('Auto-refreshed data', 'info');
             }, 120000);
+            
+            // Also retry LiveMW API every 30 seconds (in case it was temporarily down)
+            setInterval(() => {
+                fetchRealtimeTotal().then(() => {
+                    // If we got new data, update the dashboard
+                    if (realtimeTotal > 0) {
+                        updateDashboardStats();
+                    }
+                });
+            }, 30000);
         });
 
         // ============================================
@@ -2377,7 +2419,12 @@
             
             console.log('Latest data found:', latestData);
             
-            const latestTotal = realtimeTotal; // Use real-time value from OpenSheet API
+            // Use real-time value from OpenSheet API, fallback to historical if not available
+            const latestTotal = realtimeTotal > 0 ? realtimeTotal : (parseInt(latestData.Total) || 0);
+            
+            if (realtimeTotal === 0) {
+                console.warn('Real-time API returned 0 or failed, using historical data:', latestTotal, 'MW');
+            }
             
             // Format date and time properly for display
             const displayDate = formatDateForDisplay(latestData.Date);
