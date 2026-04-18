@@ -3331,25 +3331,39 @@
         }
 
         function updateDayOnDayComparison() {
-            const sortedData = sortDataNewestFirst(gridData);
-            const latestReading = sortedData[0];
-            const latestTotal = parseInt(latestReading.Total) || 0;
+            // FIX: parseMW strips commas before parsing (Sheets API may return "3,456" not "3456")
+            function parseMW(val) {
+                if (val === null || val === undefined) return 0;
+                return parseInt(String(val).replace(/,/g, ''), 10) || 0;
+            }
 
-            // Extract calendar date (DD/MM/YYYY) from the latest record — no time involved
+            // FIX: getCalendarDate returns null for records with blank/invalid dates so they can be skipped
             function getCalendarDate(record) {
                 const dateStr = record.Date || '';
                 if (dateStr.includes('/')) {
-                    // Already DD/MM/YYYY — parse as calendar day
                     const [d, m, y] = dateStr.split('/').map(Number);
-                    if (!isNaN(d) && !isNaN(m) && !isNaN(y)) {
+                    if (!isNaN(d) && !isNaN(m) && !isNaN(y) && y > 2000) {
                         return new Date(y, m - 1, d); // local midnight — no timezone drift
                     }
                 }
                 // Fallback: use parseDateTime but strip time to midnight
                 const dt = parseDateTime(record);
+                if (isNaN(dt.getTime())) return null; // guard against Invalid Date
                 return new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
             }
 
+            // FIX: filter out records with unparseable dates before sorting
+            const validData = gridData.filter(r => getCalendarDate(r) !== null);
+            if (validData.length < 2) {
+                dodChange.textContent = 'Insufficient data';
+                dodSubtext.textContent = 'Need at least 2 days of readings';
+                dodBadge.style.display = 'none';
+                return;
+            }
+
+            const sortedData = sortDataNewestFirst(validData);
+            const latestReading = sortedData[0];
+            const latestTotal = parseMW(latestReading.Total);
             const latestCalDate = getCalendarDate(latestReading);
 
             // Find the best reading from the PREVIOUS calendar day (1 to 3 days back)
@@ -3357,12 +3371,13 @@
             let previousDayLabel = '';
             for (let i = 1; i < sortedData.length; i++) {
                 const recCalDate = getCalendarDate(sortedData[i]);
+                if (!recCalDate) continue; // skip records with bad dates
                 // Difference in whole calendar days
                 const msPerDay = 24 * 60 * 60 * 1000;
                 const daysDiff = Math.round((latestCalDate - recCalDate) / msPerDay);
 
                 if (daysDiff >= 1 && daysDiff <= 3) {
-                    previousDayTotal = parseInt(sortedData[i].Total) || 0;
+                    previousDayTotal = parseMW(sortedData[i].Total);
                     previousDayLabel = sortedData[i].Date || '';
                     break;
                 }
