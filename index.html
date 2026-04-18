@@ -1006,6 +1006,236 @@
         }
         
         /* ============================================
+           EMAIL SUBSCRIBE BANNER (top of page)
+        ============================================ */
+        .subscribe-bar {
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+            color: white;
+            padding: 0.65rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            border-radius: 10px;
+            margin-bottom: 0.85rem;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 8px rgba(30,58,138,0.25);
+        }
+        .subscribe-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex: 1 1 200px;
+            min-width: 0;
+        }
+        .subscribe-bar-left i {
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            color: #93c5fd;
+        }
+        .subscribe-bar-text {
+            font-size: 0.82rem;
+            line-height: 1.35;
+        }
+        .subscribe-bar-text strong {
+            display: block;
+            font-size: 0.88rem;
+        }
+        .subscribe-bar-text span {
+            opacity: 0.85;
+            font-size: 0.76rem;
+        }
+        .subscribe-bar-btn {
+            background: white;
+            color: #1e3a8a;
+            border: none;
+            padding: 0.45rem 1.1rem;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: background 0.2s, transform 0.2s;
+            flex-shrink: 0;
+            min-width: unset;
+            width: auto;
+            transform: none !important;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+        }
+        .subscribe-bar-btn:hover {
+            background: #dbeafe;
+            transform: translateY(-1px) !important;
+        }
+        .subscribe-bar-dismiss {
+            background: none !important;
+            border: none !important;
+            color: rgba(255,255,255,0.7) !important;
+            cursor: pointer;
+            padding: 0.2rem !important;
+            font-size: 0.7rem !important;
+            min-width: unset !important;
+            width: 20px !important;
+            height: 20px !important;
+            flex-shrink: 0;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border-radius: 50% !important;
+            transform: none !important;
+            box-shadow: none !important;
+            gap: 0 !important;
+        }
+        .subscribe-bar-dismiss:hover {
+            color: white !important;
+            background: rgba(255,255,255,0.15) !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Subscribe Modal */
+        .subscribe-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .subscribe-overlay.open {
+            display: flex;
+        }
+        .subscribe-modal {
+            background: white;
+            border-radius: 16px;
+            padding: 1.75rem;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            position: relative;
+            animation: modalPop 0.3s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        @keyframes modalPop {
+            from { transform: scale(0.85); opacity: 0; }
+            to   { transform: scale(1);   opacity: 1; }
+        }
+        .subscribe-modal-close {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background: none !important;
+            border: none !important;
+            cursor: pointer;
+            color: var(--gray) !important;
+            font-size: 1rem !important;
+            min-width: unset !important;
+            width: 28px !important;
+            height: 28px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border-radius: 50% !important;
+            transform: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            gap: 0 !important;
+        }
+        .subscribe-modal-close:hover {
+            background: #f1f5f9 !important;
+            color: var(--dark) !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        .subscribe-modal h3 {
+            color: var(--primary);
+            font-size: 1.1rem;
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .subscribe-modal p {
+            color: var(--gray);
+            font-size: 0.83rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        .subscribe-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            margin-bottom: 0.75rem;
+        }
+        .subscribe-form-group label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        .subscribe-form-group input {
+            width: 100%;
+            padding: 0.65rem 0.9rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border 0.2s;
+            box-sizing: border-box;
+        }
+        .subscribe-form-group input:focus {
+            border-color: var(--secondary);
+        }
+        .subscribe-submit-btn {
+            width: 100% !important;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6) !important;
+            color: white !important;
+            border: none !important;
+            padding: 0.75rem !important;
+            border-radius: 8px !important;
+            font-size: 0.9rem !important;
+            font-weight: 700 !important;
+            cursor: pointer;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 0.5rem !important;
+            transition: all 0.2s !important;
+            margin-top: 0.5rem;
+        }
+        .subscribe-submit-btn:hover {
+            opacity: 0.9 !important;
+            transform: translateY(-1px) !important;
+        }
+        .subscribe-disclaimer {
+            font-size: 0.72rem;
+            color: var(--gray);
+            text-align: center;
+            margin-top: 0.75rem;
+            line-height: 1.4;
+        }
+        .subscribe-success {
+            text-align: center;
+            padding: 1rem 0;
+        }
+        .subscribe-success i {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+        .subscribe-success h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        .subscribe-success p {
+            font-size: 0.82rem;
+            color: var(--gray);
+        }
+
+        /* ============================================
            SOLAR PROMO BANNER
         ============================================ */
         .solar-banner {
@@ -1656,6 +1886,56 @@
             </div>
         </header>
         
+        <!-- EMAIL SUBSCRIBE BAR -->
+        <div class="subscribe-bar" id="subscribe-bar">
+            <div class="subscribe-bar-left">
+                <i class="fas fa-envelope-open-text"></i>
+                <div class="subscribe-bar-text">
+                    <strong>📊 Get Daily Grid Alerts — Free!</strong>
+                    <span>Morning & evening DisCo load reports straight to your inbox.</span>
+                </div>
+            </div>
+            <button class="subscribe-bar-btn" id="subscribe-open-btn">
+                <i class="fas fa-bell"></i> Subscribe
+            </button>
+            <button class="subscribe-bar-dismiss" id="subscribe-bar-dismiss" aria-label="Dismiss">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- SUBSCRIBE MODAL -->
+        <div class="subscribe-overlay" id="subscribe-overlay">
+            <div class="subscribe-modal">
+                <button class="subscribe-modal-close" id="subscribe-modal-close" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div id="subscribe-form-view">
+                    <h3><i class="fas fa-envelope-open-text"></i> Subscribe to Grid Alerts</h3>
+                    <p>Get 4 daily emails with Nigeria's live DisCo allocation data — morning and evening readings, plus trend analysis. Completely free, unsubscribe anytime.</p>
+                    <div class="subscribe-form-group">
+                        <label for="subscribe-name">Your Name</label>
+                        <input type="text" id="subscribe-name" placeholder="e.g. Amaka Obi" autocomplete="name" />
+                    </div>
+                    <div class="subscribe-form-group">
+                        <label for="subscribe-email">Email Address <span style="color:var(--danger)">*</span></label>
+                        <input type="email" id="subscribe-email" placeholder="yourname@email.com" autocomplete="email" />
+                    </div>
+                    <button class="subscribe-submit-btn" id="subscribe-submit-btn">
+                        <i class="fas fa-paper-plane"></i> Subscribe Now
+                    </button>
+                    <p class="subscribe-disclaimer">
+                        📬 You'll receive up to 4 emails/day with live grid data.<br>
+                        Your email is only used for DiscoWatchNG alerts and will never be shared.
+                    </p>
+                </div>
+                <div id="subscribe-success-view" class="subscribe-success" style="display:none;">
+                    <i class="fas fa-check-circle"></i>
+                    <h4>You're Subscribed! 🎉</h4>
+                    <p>Welcome aboard! Your first grid alert will arrive with the next morning or evening reading. Keep an eye on your inbox (and spam folder just in case).</p>
+                </div>
+            </div>
+        </div>
+
         <!-- ADDED: SEO Hero Section with H1 - FULLY RESPONSIVE -->
         <div class="hero-seo">
             <h1>Is There Light in Nigeria Right Now?</h1>
@@ -3054,16 +3334,36 @@
             const sortedData = sortDataNewestFirst(gridData);
             const latestReading = sortedData[0];
             const latestTotal = parseInt(latestReading.Total) || 0;
-            const latestDate = parseDateTime(latestReading);
 
-            // Find previous day's reading
+            // Extract calendar date (DD/MM/YYYY) from the latest record — no time involved
+            function getCalendarDate(record) {
+                const dateStr = record.Date || '';
+                if (dateStr.includes('/')) {
+                    // Already DD/MM/YYYY — parse as calendar day
+                    const [d, m, y] = dateStr.split('/').map(Number);
+                    if (!isNaN(d) && !isNaN(m) && !isNaN(y)) {
+                        return new Date(y, m - 1, d); // local midnight — no timezone drift
+                    }
+                }
+                // Fallback: use parseDateTime but strip time to midnight
+                const dt = parseDateTime(record);
+                return new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+            }
+
+            const latestCalDate = getCalendarDate(latestReading);
+
+            // Find the best reading from the PREVIOUS calendar day (1 to 3 days back)
             let previousDayTotal = null;
+            let previousDayLabel = '';
             for (let i = 1; i < sortedData.length; i++) {
-                const currentDate = parseDateTime(sortedData[i]);
-                const daysDiff = Math.floor((latestDate - currentDate) / (1000 * 60 * 60 * 24));
-                
-                if (daysDiff >= 1 && daysDiff <= 2) {
+                const recCalDate = getCalendarDate(sortedData[i]);
+                // Difference in whole calendar days
+                const msPerDay = 24 * 60 * 60 * 1000;
+                const daysDiff = Math.round((latestCalDate - recCalDate) / msPerDay);
+
+                if (daysDiff >= 1 && daysDiff <= 3) {
                     previousDayTotal = parseInt(sortedData[i].Total) || 0;
+                    previousDayLabel = sortedData[i].Date || '';
                     break;
                 }
             }
@@ -3073,7 +3373,7 @@
                 const percentChange = previousDayTotal > 0 ? ((change / previousDayTotal) * 100).toFixed(1) : 0;
 
                 dodChange.textContent = `${change >= 0 ? '+' : ''}${formatNumber(change)} MW`;
-                dodSubtext.textContent = `Previous day: ${formatNumber(previousDayTotal)} MW | Current: ${formatNumber(latestTotal)} MW`;
+                dodSubtext.textContent = `Previous day (${previousDayLabel}): ${formatNumber(previousDayTotal)} MW | Current: ${formatNumber(latestTotal)} MW`;
                 
                 dodBadge.style.display = 'inline-flex';
                 dodPercentage.textContent = `${change >= 0 ? '+' : ''}${percentChange}%`;
@@ -3980,6 +4280,92 @@
             mapTransform = { x: 0, y: 0, scale: 1 };
             renderDiscoMap();
         }
+
+        // ============================================
+        // EMAIL SUBSCRIBE LOGIC
+        // Uses a Google Apps Script Web App endpoint to write to a
+        // "Subscribers" sheet in the same Google Sheet.
+        // The endpoint URL below must be deployed from the Apps Script
+        // as a Web App (Execute as: Me, Who has access: Anyone).
+        // ============================================
+        const SUBSCRIBE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzALtWeukE9ZJHO7qntHaniB5VCGwYGq14wj8IWPMitJCevH5sKm5qyF2_CdUYrCL9uIQ/exec';
+
+        const subscribeOpenBtn = document.getElementById('subscribe-open-btn');
+        const subscribeOverlay = document.getElementById('subscribe-overlay');
+        const subscribeModalClose = document.getElementById('subscribe-modal-close');
+        const subscribeBarDismiss = document.getElementById('subscribe-bar-dismiss');
+        const subscribeSubmitBtn = document.getElementById('subscribe-submit-btn');
+        const subscribeBar = document.getElementById('subscribe-bar');
+
+        function openSubscribeModal() {
+            subscribeOverlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSubscribeModal() {
+            subscribeOverlay.classList.remove('open');
+            document.body.style.overflow = '';
+            // Reset to form view after short delay (in case re-opened)
+            setTimeout(() => {
+                document.getElementById('subscribe-form-view').style.display = '';
+                document.getElementById('subscribe-success-view').style.display = 'none';
+                document.getElementById('subscribe-email').value = '';
+                document.getElementById('subscribe-name').value = '';
+            }, 400);
+        }
+
+        subscribeOpenBtn.addEventListener('click', openSubscribeModal);
+        subscribeModalClose.addEventListener('click', closeSubscribeModal);
+        subscribeBarDismiss.addEventListener('click', () => {
+            subscribeBar.style.display = 'none';
+        });
+
+        // Close modal on overlay background click
+        subscribeOverlay.addEventListener('click', (e) => {
+            if (e.target === subscribeOverlay) closeSubscribeModal();
+        });
+
+        subscribeSubmitBtn.addEventListener('click', async () => {
+            const email = document.getElementById('subscribe-email').value.trim();
+            const name = document.getElementById('subscribe-name').value.trim();
+
+            if (!email) {
+                showNotification('Please enter your email address', 'warning');
+                document.getElementById('subscribe-email').focus();
+                return;
+            }
+            // Basic email format check
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showNotification('Please enter a valid email address', 'warning');
+                document.getElementById('subscribe-email').focus();
+                return;
+            }
+
+            // Disable button while submitting
+            subscribeSubmitBtn.disabled = true;
+            subscribeSubmitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Subscribing...';
+
+            try {
+                // Submit to the Apps Script Web App endpoint
+                const params = new URLSearchParams({ email, name, action: 'subscribe' });
+                const response = await fetch(`${SUBSCRIBE_ENDPOINT}?${params.toString()}`, {
+                    method: 'GET',
+                    mode: 'no-cors' // Apps Script requires no-cors from external pages
+                });
+
+                // no-cors means we can't read the response status, but if no network error
+                // the request went through — show success
+                document.getElementById('subscribe-form-view').style.display = 'none';
+                document.getElementById('subscribe-success-view').style.display = '';
+                showNotification('✅ Subscribed! Welcome to DiscoWatchNG alerts.', 'success');
+
+            } catch (err) {
+                console.error('Subscribe error:', err);
+                showNotification('❌ Could not subscribe. Please try again.', 'error');
+                subscribeSubmitBtn.disabled = false;
+                subscribeSubmitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Subscribe Now';
+            }
+        });
 
         // ============================================
         window.addEventListener('resize', function() {
